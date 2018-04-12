@@ -65,7 +65,7 @@ do i=10,210,1
   call calc_xi(xi,1,pol,polz,x,kz,kperp)	! second parameter is index of species 
   call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,1,pol,polz,x,kz,kperp) ! fifth parameter is index of species 
 
-  write (*,*)  kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz)!,energy,quality
+  write (*,*)  kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
   write (10,*) kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
 
 ! if (i.EQ.10) call write_delta_f(1,kz,x,pol,polz) ! first parameter is index of species   

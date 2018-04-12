@@ -120,7 +120,7 @@ do i=1,3
 	energy=energy+1.d0*real(Bk(i))**2+aimag(Bk(i))**2
 enddo
 
-energy=energy/(16.d0*M_PI)
+energy=energy/(16.d0*M_PI*vAc*vAc)
 
 
 ! Determine the contribution to gamma from all species (see Eq. (4) in Quataert (1998))
@@ -133,10 +133,6 @@ do j=1,numspec
 			gamma_contribution(j) = gamma_contribution(j)+ (real(Ek(k))-uniti*aimag(Ek(k)))*chi_a(j,k,i)*Ek(i)
 		enddo
 	enddo
-	gamma_contribution(j) = -xr*gamma_contribution(j) /(4.d0*energy*4.d0*M_PI)
+	gamma_contribution(j) = -xr*gamma_contribution(j) /(4.d0*vAc*vAc*energy*4.d0*M_PI)
 enddo
 end subroutine
-
-
-
-
