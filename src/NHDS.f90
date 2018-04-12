@@ -35,7 +35,7 @@ implicit none
 integer :: j,i
 double complex :: x,pol,polz,xi,deltaRj
 double complex :: dUperpx,dUperpy,dUpar
-double precision :: kperp,kz,energy
+double precision :: kperp,kz,energy,gamma_contribution(10)
 real :: quality
 
 
@@ -49,7 +49,7 @@ enddo
 
 
 ! Initial guess for frequency in units of proton gyrofrequency:
-x=0.009d0-0.00001d0*uniti
+x=0.009d0-0.0001d0*uniti
 
 open(unit=10,file='output.dat',status='replace',action='write') 
 
@@ -60,12 +60,12 @@ do i=10,210,1
 
   call newton_method(x,kz,kperp,quality)
   call calc_polarization(pol,polz,x,kz,kperp)
-  call waveenergy(energy,x,kz,kperp)
+  call waveenergy(energy,x,kz,kperp,gamma_contribution)
 
   call calc_xi(xi,1,pol,polz,x,kz,kperp)	! second parameter is index of species 
   call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,1,pol,polz,x,kz,kperp) ! fifth parameter is index of species 
 
-  write (*,*)  kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
+  write (*,*)  kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz)!,energy,quality
   write (10,*) kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
 
 ! if (i.EQ.10) call write_delta_f(1,kz,x,pol,polz) ! first parameter is index of species   

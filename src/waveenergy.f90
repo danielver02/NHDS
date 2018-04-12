@@ -13,12 +13,12 @@
 !    You should have received a copy of the GNU General Public License
 !    along with NHDS.  If not, see <http://www.gnu.org/licenses/>.
 
-subroutine waveenergy(energy,x,kz,kperp)
+subroutine waveenergy(energy,x,kz,kperp,gamma_contribution)
 use input_params
 implicit none
-double complex :: ep(3,3),chi(3,3),chiplus(3,3),Ek(3),Bk(3),epprime(3,3)
+double complex :: ep(3,3),chi(3,3),chiplus(3,3),Ek(3),Bk(3),epprime(3,3), chi_a(10,3,3)
 double complex :: Ekmult(3), Ekmultprime(3), eph(3,3), epprimeh(3,3)
-double precision :: kz,kperp,energy
+double precision :: kz,kperp,energy,gamma_contribution(10)
 double complex :: x,pol,polz,xr,dx
 integer :: i,k,j
 
@@ -62,6 +62,8 @@ do j=1,numspec
   call calc_chi(chi,j,kz,kperp,xr)
   do i=1,3
     do k=1,3
+      !anti-hermitian part of the susceptibility:
+  	  chi_a(j,i,k)=(chi(i,k)-(real(chi(k,i))-uniti*aimag(chi(k,i))))/(2.d0*uniti)
       ep(i,k)=ep(i,k)+chi(i,k)
     enddo
   enddo
@@ -120,6 +122,19 @@ enddo
 
 energy=energy/(16.d0*M_PI)
 
+
+! Determine the contribution to gamma from all species (see Eq. (4) in Quataert (1998))
+gamma_contribution=0.d0
+
+do j=1,numspec
+	! chi_a and Ek are already correct from above.
+	do k=1,3
+		do i=1,3
+			gamma_contribution(j) = gamma_contribution(j)+ (real(Ek(k))-uniti*aimag(Ek(k)))*chi_a(j,k,i)*Ek(i)
+		enddo
+	enddo
+	gamma_contribution(j) = -xr*gamma_contribution(j) /(4.d0*energy*4.d0*M_PI)
+enddo
 end subroutine
 
 
