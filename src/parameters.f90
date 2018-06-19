@@ -1,109 +1,43 @@
-!This file is part of NHDS.
+! This file is part of NHDS
+! Copyright (C) 2018 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+!All rights reserved.
 !
-!    NHDS is free software: you can redistribute it and/or modify
-!    it under the terms of the GNU General Public License as published by
-!    the Free Software Foundation, either version 3 of the License, or
-!    (at your option) any later version.
+!Redistribution and use in source and binary forms, with or without
+!modification, are permitted provided that the following conditions are met:
 !
-!    NHDS is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    GNU General Public License for more details.
+!1. Redistributions of source code must retain the above copyright notice, this
+!   list of conditions and the following disclaimer.
+!2. Redistributions in binary form must reproduce the above copyright notice,
+!   this list of conditions and the following disclaimer in the documentation
+!   and/or other materials provided with the distribution.
 !
-!    You should have received a copy of the GNU General Public License
-!    along with NHDS.  If not, see <http://www.gnu.org/licenses/>.
+!THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+!ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+!WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+!DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+!ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+!(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+!LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+!ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+!(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+!SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+!
+!The views and conclusions contained in the software and documentation are those
+!of the authors and should not be interpreted as representing official policies,
+!either expressed or implied, of the NHDS project.
 
 subroutine set_parameters()
 use input_params
 implicit none
 
-! Number of species 
-! (up to 10 species are possible)
-numspec=2
 
-! Maximum number of iterations in the Newton method
-numiter=1000
+nameList /parameters/ &
+    numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, alpha,&
+    beta, charge, mass, density, vdrift, theta, vAc, ampl_mode, ampl, output_warning,&
+    mmax, Bessel_zero_deltaf, vxsteps, vysteps, vzsteps, vxrange, vyrange, vzrange,&
+    timesteps, periods, num_periods, damping, const_r
 
-! Threshold for the determinant of the dispersion tensor:
-! If det D <= det_D_threshold, the Newton iteration will be stopped
-det_D_threshold=1.d-16
-
-! Maximum of sum in Bessel functions (both regular and modified)
-! can be very low (e.g., 3) for quasi-parallel propagation
-nmax=1000
-
-! If I_n is less than this value, higher n are neglected:
-Bessel_zero=1.d-50
-
-! Temperature anisotropy (Tperp/Tparallel)
-alpha=(/ 1.d0,1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0 /)
-
-! Parallel beta of the species
-beta=(/ 1.d0,1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0 /)
-
-! Charge of the species in units of the first ion charge
-charge=(/ 1.d0,-1.d0,2.d0,-1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0 /)
-
-! Mass of the species in units of ion mass
-mass=(/ 1.d0,1.d0/1836.d0,4.d0,1.d0/1836.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0 /)
-
-! Density of the species in units of proton density
-density=(/ 1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0 /)
-
-! Drift speed of the species in units of proton Alfven speed
-vdrift=(/ 0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0 /)
-
-! Angle of propagation (in degrees)
-theta=0.001d0
-
-! Alfven speed divided by speed of light 
-vAc=1.d-4
-
-! Amplitude mode: If 1, then ampl = delta B_x / B0. If 2, then ampl = delta B_y / B0.
-! If 3, then ampl = delta B_z / B0
-ampl_mode=3
-
-! Amplitude for the calculation of polarization properties:
-ampl=1.d0
-
-! Print warnings to std. output and stop program in case of problems
-output_warning=.FALSE.
-
-!! The following parameters are used to determine delta f in write_delta_f:
-! Maximum of sum in Bessel function:
-! can be very low (e.g., 3) for quasi-parallel propagation
-mmax=1000
-
-! If I_n is less than this value, higher m are neglected:
-Bessel_zero_deltaf=1.d-50
-
-! Steps in vx, vy, and vz (standard: 100):
-vxsteps=100
-vysteps=100
-vzsteps=100
-
-! Range in vpar and vperp:
-vxrange=(/ -1.d0,1.d0 /)
-vyrange=(/ -1.d0,1.d0 /)
-vzrange=(/ -1.d0,1.d0 /)
-
-! Number of time steps for one full period (standard: 25):
-timesteps=40
-
-! If periods is .TRUE., then num_periods is number of periods (2 PI / omega_r).
-! If periods is .FALSE., then num_periods is number of gyro-periods (2 PI / Omega_p).
-periods=.TRUE.
-
-! Number of periods (standard: 8):
-num_periods=1
-
-! Include wave damping in delta f calculation or not (exp(gamma*t)-term):
-damping=.FALSE.
-
-! If const_r is .TRUE., then delta f is evaluated at point r = 0 -> cos(-omega * t)
-! If const_r is .FALSE., then the wave period is a function of space at -> cos(k * r) 
-!		with k * r from 0 ... 2 pi at a fixed time. We "fly" along the k-direction over one wave train.
-! 		If set on .FALSE., periods does not make a difference
-const_r=.TRUE.
+    open (unit=5,file="parameters.in",status='old',action='read')
+    read (unit=5,nml=parameters)
 
 end subroutine

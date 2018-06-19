@@ -1,17 +1,30 @@
-!This file is part of NHDS.
+! This file is part of NHDS
+! Copyright (C) 2018 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+!All rights reserved.
 !
-!    NHDS is free software: you can redistribute it and/or modify
-!    it under the terms of the GNU General Public License as published by
-!    the Free Software Foundation, either version 3 of the License, or
-!    (at your option) any later version.
+!Redistribution and use in source and binary forms, with or without
+!modification, are permitted provided that the following conditions are met:
 !
-!    NHDS is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    GNU General Public License for more details.
+!1. Redistributions of source code must retain the above copyright notice, this
+!   list of conditions and the following disclaimer.
+!2. Redistributions in binary form must reproduce the above copyright notice,
+!   this list of conditions and the following disclaimer in the documentation
+!   and/or other materials provided with the distribution.
 !
-!    You should have received a copy of the GNU General Public License
-!    along with NHDS.  If not, see <http://www.gnu.org/licenses/>.
+!THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+!ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+!WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+!DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+!ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+!(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+!LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+!ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+!(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+!SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+!
+!The views and conclusions contained in the software and documentation are those
+!of the authors and should not be interpreted as representing official policies,
+!either expressed or implied, of the NHDS project.
 
 subroutine calc_xi(xi,j,pol,polz,x,kz,kperp)
 use input_params
@@ -27,7 +40,7 @@ if (ampl_mode.EQ.1) then
 	! Avec fulfills the equation  c * dE = Avec * vA * dB_x
 	Avec(1)=uniti*x/(kz*pol)
 	Avec(2)=-x/kz
-	Avec(3)=polz*uniti*x/(kz*pol)	
+	Avec(3)=polz*uniti*x/(kz*pol)
 else if (ampl_mode.EQ.2) then
 	! Avec fulfills the equation  c * dE = Avec * vA * dB_y
 	Avec(1)=x/(kz-polz*kperp)
@@ -79,7 +92,7 @@ if (ampl_mode.EQ.1) then
 	! Avec fulfills the equation  c * dE = Avec * vA * dB_x
 	Avec(1)=uniti*x/(kz*pol)
 	Avec(2)=-x/kz
-	Avec(3)=polz*uniti*x/(kz*pol)	
+	Avec(3)=polz*uniti*x/(kz*pol)
 else if (ampl_mode.EQ.2) then
 	! Avec fulfills the equation  c * dE = Avec * vA * dB_y
 	Avec(1)=x/(kz-polz*kperp)
@@ -142,10 +155,10 @@ dppar=0.d0
 
 ! Run over all n:
 do n=-nmaxrun,nmaxrun
-   
+
 	if (n.GE.0) then
 		BInz=1.d0*besselI(n,z)
-		dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z 
+		dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
 	else
 		BInz=1.d0*besselI(-n,z)
 		dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
@@ -156,7 +169,7 @@ do n=-nmaxrun,nmaxrun
 	if (n.EQ.1) d2BInzdz2=0.25d0*(3.d0*besselI(1,z)+besselI(3,z))
 	if (n.EQ.-1) d2BInzdz2=0.25d0*(besselI(3,z)+3.d0*besselI(1,z))
 	if (n.EQ.0) d2BInzdz2=0.5d0*(besselI(2,z)+besselI(0,z))
-	
+
 	zeta=(x-kz*vdrift(j)-1.d0*n*Omega(j))/(kz*vtherm(j))
 
 	! determine Stix' (normalized) dispersion functions:
@@ -171,18 +184,18 @@ do n=-nmaxrun,nmaxrun
 
 
 	! This is for the calculation of dpperp:
-	
+
 	Exterm=Avec(1)*(BInz+z*(dBinzdz-BInz))*(1.d0*n)*Omega(j)/kperp
 	Eyterm=-uniti*Avec(2)*(BInz-dBInzdz-0.5d0*z*(BInz+d2BInzdz2)+z*dBInzdz)
 	Eyterm=Eyterm*kperp*vtherm(j)*vtherm(j)*alpha(j)/Omega(j)
 	Ezterm=(1.d0-1.d0*n*Omega(j)/x)*alpha(j)*(Z1-vdrift(j)*Z0)+1.d0*n*Omega(j)*Z1/x
 	Ezterm=Ezterm*Avec(3)*(BInz+z*(dBInzdz-BInz))
-	
+
 	dpperp=dpperp+(Exterm+Eyterm)*(Z0-kz*Z1/x+alpha(j)*kz*(Z1-vdrift(j)*Z0)/x)+Ezterm
 
-	
+
 	! This is for the calculation of dppar:
-	
+
 	Exterm=alpha(j)*kz*(Z3-vdrift(j)*Z2-2.d0*Ubar*Z2+2.d0*vdrift(j)*Ubar*Z1+Ubar*Ubar*Z1-vdrift(j)*Ubar*Ubar*Z0)/x
 	Exterm=Exterm+Z2-2.d0*Ubar*Z1+Ubar*Ubar*Z0
 	Exterm=Exterm-kz*(Z3-2.d0*Ubar*Z2+Ubar*Ubar*Z1)/x
@@ -210,4 +223,3 @@ deltaRj = (vtherm(j)*vtherm(j)*alpha(j)+ampl*dpperp/(density(j)*mass(j)))
 deltaRj = deltaRj /(vtherm(j)*vtherm(j)+ampl*dppar/(density(j)*mass(j)))
 
 end subroutine
-
