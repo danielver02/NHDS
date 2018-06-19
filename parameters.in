@@ -47,6 +47,12 @@ Bessel_zero=1.d-50
 ! Initial guess for the frequency (complex number):
 initial_guess=(0.009d0,0.0001d0)
 
+! Range of values to scan over in kz:
+kzrange=0.01d0,0.21d0
+
+! Number of steps to scan over kzrange:
+kzsteps=200
+
 ! Temperature anisotropy (Tperp/Tparallel)
 alpha=1.d0,1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
