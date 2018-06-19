@@ -32,10 +32,10 @@ implicit none
 
 
 nameList /parameters/ &
-    numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, alpha,&
-    beta, charge, mass, density, vdrift, theta, vAc, ampl_mode, ampl, output_warning,&
-    mmax, Bessel_zero_deltaf, vxsteps, vysteps, vzsteps, vxrange, vyrange, vzrange,&
-    timesteps, periods, num_periods, damping, const_r
+    numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, kzrange,&
+    kzsteps, alpha, beta, charge, mass, density, vdrift, theta, vAc, ampl_mode,&
+    ampl, output_warning, mmax, Bessel_zero_deltaf, vxsteps, vysteps, vzsteps, &
+    vxrange, vyrange, vzrange, timesteps, periods, num_periods, damping, const_r
 
     open (unit=5,file="parameters.in",status='old',action='read')
     read (unit=5,nml=parameters)
