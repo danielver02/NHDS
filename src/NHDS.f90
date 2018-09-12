@@ -43,7 +43,7 @@ end module input_params
 program NHDS
 use input_params
 implicit none
-integer :: j,i
+integer :: j,i,k
 double complex :: x,pol,polz,xi,deltaRj
 double complex :: dUperpx,dUperpy,dUpar
 double precision :: kperp,kz,energy,gamma_contribution(10)
@@ -62,6 +62,9 @@ enddo
 x=initial_guess
 
 open(unit=10,file='output.dat',status='replace',action='write')
+write (10,*) '# kz, w, gamma, Re(iEy/Ex), Im(iEy/Ex), Re(iEz/Ex), Im(iEz/Ex), energy, quality'
+open(unit=11,file='Plasma.dat',status='replace',action='write')
+write (11,*) '# kz, dn, dUperpx, dUperpy, dUparl'
 
 
 do i=1,kzsteps
@@ -73,8 +76,12 @@ do i=1,kzsteps
   call calc_polarization(pol,polz,x,kz,kperp)
   call waveenergy(energy,x,kz,kperp,gamma_contribution)
 
-  call calc_xi(xi,1,pol,polz,x,kz,kperp)	! second parameter is index of species
-  call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,1,pol,polz,x,kz,kperp) ! fifth parameter is index of species
+  do k=1,numspec
+     call calc_xi(xi,k,pol,polz,x,kz,kperp)	! second parameter is index of species
+     call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,k,pol,polz,x,kz,kperp) ! fifth parameter is index of species
+  write(11,*) kz, xi, dUperpx, dUperpy, dUpar
+  enddo
+  write(11,*) ''
 
   write (*,*)  kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
   write (10,*) kz,real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
