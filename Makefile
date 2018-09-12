@@ -27,7 +27,7 @@
 #either expressed or implied, of the NHDS project.
 
 SRCS := $(shell ls src/*.f90)
-OBJS := $(SRCS:src/%.f90=obj/%.o)
+OBJS := $(SRCS:src/%.f90=src/obj/%.o)
 HDF5 := /usr
 FORTRANLIB := -I$(HDF5)/include $(HDF5)/lib64/libhdf5_fortran.so
 LIBSHDF := $(FORTRANLIB) $(HDF5)/lib64/libhdf5.so
@@ -40,7 +40,7 @@ bin/NHDS: $(OBJS)
 	$(COMPILER)  $(OBJS) -o $@ $(LIB64)  $(LIBSHDF) $(LIBZ)
 
 
-obj/%.o:src/%.f90
+src/obj/%.o:src/%.f90
 	$(COMPILER)  -c  $< -o $@
 
 
