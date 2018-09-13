@@ -76,7 +76,6 @@ do j=1,theta_steps
 
    ! Initial guess for frequency in units of proton gyrofrequency:
    x=initial_guess
-
    do i=1,ksteps
 
       kz=kk(i)*cos(theta(j)*M_PI/180.d0)
