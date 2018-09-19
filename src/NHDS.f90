@@ -30,27 +30,27 @@ program NHDS
 use input_params
 implicit none
 integer :: j,i,k
-double complex :: x,pol,polz,xi,deltaRj
-double complex :: dUperpx,dUperpy,dUpar
+double complex :: x 
 double precision, allocatable, dimension(:) :: kk,theta
+double complex, allocatable, dimension(:) :: guesses
 double precision :: dk, dth
-double precision :: kperp,kz,energy,gamma_contribution(10)
-real :: quality
 
 dk=0.; dth=0.
 call set_parameters()
 
-allocate(kk(ksteps), theta(theta_steps))
+allocate(kk(ksteps)) 
 if (kth_file) then
    ! if reading k,th values from file
    ! ksteps=theta_steps=number of (k,th) pairs in input file
+   allocate(theta(ksteps),guesses(ksteps))
    kth_filename=adjustl(kth_filename)
-   !write(*,*) kth_filename
    open(unit=793,file=kth_filename)
    read(793,*) kk
    read(793,*) theta
+   read(793,*) guesses
    close(793)
 else
+   allocate(theta(theta_steps))
    ! If using range of k and theta, create the kk, theta arrays to use
    if (ksteps .gt. 1) dk = (krange(2)-krange(1))/(1.d0*ksteps-1.d0)
    if (theta_steps .gt. 1) dth = (theta_range(2)-theta_range(1))/(1.d0*theta_steps-1.d0)
@@ -72,36 +72,60 @@ if (output_mom) then
    write (11,*) '# kk, theta, Re(dn), Im(dn), Re(dUperpx), Im(dUperpx), Re(dUperpy), Im(dUperpy), Re(dUparl), Im(dUparl)'
 endif
 
-do j=1,theta_steps
-
-   ! Initial guess for frequency in units of proton gyrofrequency:
-   x=initial_guess
+if (kth_file) then
    do i=1,ksteps
-
-      kz=kk(i)*cos(theta(j)*M_PI/180.d0)
-      kperp=kk(i)*sin(theta(j)*M_PI/180.d0)
-      
-      call newton_method(x,kz,kperp,quality)
-      call calc_polarization(pol,polz,x,kz,kperp)
-      call waveenergy(energy,x,kz,kperp,gamma_contribution)
-      
-      if (i .eq. 1) initial_guess=x
-      
-      if (output_mom) then
-         do k=1,numspec
-            call calc_xi(xi,k,pol,polz,x,kz,kperp)	! second parameter is index of species
-            call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,k,pol,polz,x,kz,kperp) ! fifth parameter is index of species
-            write(11,'(10F9.5)') kk(i), theta(j), real(xi), aimag(xi), real(dUperpx), aimag(dUperpx), real(dUperpy), aimag(dUperpy), real(dUpar), aimag(dUpar)
-         enddo
-         write(11,*) ''
-      endif
-      
-      write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
-      write (10,'(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),real(polz),aimag(polz),energy,quality
-
-! if (i.EQ.10) call write_delta_f(1,kz,x,pol,polz) ! first parameter is index of species
+      x = guesses(i) 
+      call compute(kk(i),theta(i),x,output_mom)
    enddo
-enddo
-
+else
+   do j=1,theta_steps
+      x=initial_guess ! guess w in units of wci:
+      do i=1,ksteps
+         call compute(kk(i),theta(j),x, output_mom)
+         if (i .eq. 1) initial_guess=x
+      enddo
+   enddo
+endif
 close(10); close(11)
 end program
+
+subroutine compute(kk,theta,x,outputm)
+   use input_params
+   double precision, intent(in) :: kk, theta
+   double complex, intent(inout) :: x
+   logical, intent(in) :: outputm
+   double complex :: pol,polz,xi,deltaRj
+   double complex :: dUperpx,dUperpy,dUpar
+   double precision :: kperp,kz,energy,gamma_contribution(10)
+   real :: quality
+   integer :: k
+   kz=kk*cos(theta*M_PI/180.d0)
+   kperp=kk*sin(theta*M_PI/180.d0)
+   
+   call newton_method(x,kz,kperp,quality)
+   call calc_polarization(pol,polz,x,kz,kperp)
+   call waveenergy(energy,x,kz,kperp,gamma_contribution)
+   
+!  if (i .eq. 1) initial_guess=x
+   
+   if (outputm) then
+     do k=1,numspec
+       call calc_xi(xi,k,pol,polz,x,kz,kperp)	
+       ! second parameter is index of species
+       call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,k,pol,polz,x,kz,kperp)
+       ! fifth parameter is index of species
+       write(11,'(10F14.5)') kk, theta, real(xi), aimag(xi), real(dUperpx), &
+                            aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
+                            real(dUpar), aimag(dUpar)
+     enddo
+     write(11,*) ''
+   endif
+   
+!  write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),&
+!                        real(polz),aimag(polz),energy,quality
+   write (*, '(3F10.5,3E14.5)' ) kk, theta, real(x), aimag(x), energy, quality
+   write (10,'(3F10.5,7E14.5)') kk, theta, real(x), aimag(x), real(pol), aimag(pol),&
+                          real(polz), aimag(polz), energy, quality
+
+! if (i.EQ.10) call write_delta_f(1,kz,x,pol,polz) ! first parameter is index of species
+end subroutine compute
