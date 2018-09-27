@@ -29,14 +29,16 @@
 program NHDS
 use input_params
 implicit none
-integer :: j,i,k
+integer :: j,i
 double complex :: x 
 double precision, allocatable, dimension(:) :: kk,theta
 double complex, allocatable, dimension(:) :: guesses
 double precision :: dk, dth
+character*20 :: filename
 
 dk=0.; dth=0.
-call set_parameters()
+call get_command_argument(1,filename); filename=adjustl(filename)
+call set_parameters(filename)
 
 allocate(kk(ksteps)) 
 if (kth_file) then
@@ -64,41 +66,45 @@ do j=1,numspec
   vtherm(j)=sqrt(beta(j)/(density(j)*mass(j)))
 enddo
 
-open(unit=10,file='output.dat',status='replace',action='write')
-write (10,*) '# kk, theta, w, gamma, Re(iEy/Ex), Im(iEy/Ex), Re(iEz/Ex), Im(iEz/Ex), energy, quality'
+open(unit=10,file='output_'//trim(filename)//'.dat',status='replace',action='write')
+write (10,*) '# kk, theta, w, gamma, Re(iEy/Ex), Im(iEy/Ex), Re(Ez/Ex), Im(Ez/Ex), energy, quality'
 
 if (output_mom) then
-   open(unit=11,file='Plasma.dat',status='replace',action='write')
+   open(unit=11,file='Plasma_'//trim(filename)//'.dat',status='replace',action='write')
    write (11,*) '# kk, theta, Re(dn), Im(dn), Re(dUperpx), Im(dUperpx), Re(dUperpy), Im(dUperpy), Re(dUparl), Im(dUparl)'
+endif
+if (output_EB) then
+   open(unit=12,file='EB_'//trim(filename)//'.dat',status='replace',action='write')
+   write (14,*) '# kk, theta, Re(Ex), Im(Ex), Re(Ey), Im(Ey), Re(Ez), Im(Ez), Re(Bx), Im(Bx), Re(By), Im(By), Re(Bz), Im(Bz)'
 endif
 
 if (kth_file) then
    do i=1,ksteps
       x = guesses(i) 
-      call compute(kk(i),theta(i),x,output_mom)
+      call compute(kk(i),theta(i),x,output_mom,output_EB)
    enddo
 else
    do j=1,theta_steps
       x=initial_guess ! guess w in units of wci:
       do i=1,ksteps
-         call compute(kk(i),theta(j),x, output_mom)
+         call compute(kk(i),theta(j),x, output_mom,output_EB)
          if (i .eq. 1) initial_guess=x
       enddo
    enddo
 endif
-close(10); close(11)
+close(10); close(11); close(12)
 end program
 
-subroutine compute(kk,theta,x,outputm)
+subroutine compute(kk,theta,x,outputm,outputeb)
    use input_params
    double precision, intent(in) :: kk, theta
    double complex, intent(inout) :: x
-   logical, intent(in) :: outputm
-   double complex :: pol,polz,xi,deltaRj
+   logical, intent(in) :: outputm, outputeb
+   double complex :: pol,polz,xi,deltaRj, Ek(3), Bk(3)
    double complex :: dUperpx,dUperpy,dUpar
    double precision :: kperp,kz,energy,gamma_contribution(10)
    real :: quality
-   integer :: k
+   integer :: j
    kz=kk*cos(theta*M_PI/180.d0)
    kperp=kk*sin(theta*M_PI/180.d0)
    
@@ -109,16 +115,30 @@ subroutine compute(kk,theta,x,outputm)
 !  if (i .eq. 1) initial_guess=x
    
    if (outputm) then
-     do k=1,numspec
-       call calc_xi(xi,k,pol,polz,x,kz,kperp)	
+     do j=1,numspec
+       call calc_xi(xi,j,pol,polz,x,kz,kperp)	
        ! second parameter is index of species
-       call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,k,pol,polz,x,kz,kperp)
+       call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
        ! fifth parameter is index of species
        write(11,'(10F14.5)') kk, theta, real(xi), aimag(xi), real(dUperpx), &
                             aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
                             real(dUpar), aimag(dUpar)
      enddo
      write(11,*) ''
+   endif
+   
+   if (outputeb) then
+      Ek(1)=1.d0
+      Ek(2)=pol*uniti
+      Ek(3)=polz
+      
+      Bk(1)=-kz*Ek(2)/x/vAc
+      Bk(2)=(kz*Ek(1)-kperp*Ek(3))/x/vAc
+      Bk(3)=kperp*Ek(2)/x/vAc
+      write(12,'(14F14.5)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
+                          ,aimag(Ek(2)), real(Ek(3)), aimag(Ek(3)), real(Bk(1))&
+                          ,aimag(Bk(1)), real(Bk(2)), aimag(Bk(2)), real(Bk(3))&
+                          ,aimag(Bk(3))
    endif
    
 !  write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),&

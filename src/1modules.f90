@@ -9,7 +9,7 @@ module input_params
   double complex :: initial_guess
   double complex, parameter ::  uniti=(0.d0,1.d0)
   double precision,parameter :: M_PI=3.141592654d0
-  logical :: output_warning,damping,periods,const_r,output_mom,kth_file
+  logical :: output_warning,damping,periods,const_r,output_mom,output_EB,kth_file
   character*20 :: kth_filename
 end module input_params
 

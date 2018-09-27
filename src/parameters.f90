@@ -26,10 +26,10 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-subroutine set_parameters()
+subroutine set_parameters(filename)
 use input_params
 implicit none
-character*20 :: filename
+character*20, intent(in) :: filename
 
 
 nameList /parameters/ &
@@ -37,11 +37,11 @@ nameList /parameters/ &
     ksteps, alpha, beta, charge, mass, density, vdrift, theta_range, theta_steps,& 
     vAc, ampl_mode, ampl, output_warning, mmax, Bessel_zero_deltaf, vxsteps,&
     vysteps, vzsteps, vxrange, vyrange, vzrange, timesteps, periods, num_periods,&
-    damping, const_r, output_mom, kth_file, kth_filename
+    damping, const_r, output_mom, output_EB, kth_file, kth_filename
 
-    call get_command_argument(1,filename); filename=adjustl(filename)
    !write(*,*) filename
-    open (unit=5,file=filename,status='old',action='read')
+    open (unit=5,file=trim(filename),status='old',action='read')
     read (unit=5,nml=parameters)
+    close(5)
 
 end subroutine
