@@ -45,13 +45,13 @@ nmax=1000
 Bessel_zero=1.d-50
 
 ! Initial guess for the frequency (complex number):
-initial_guess=(0.009d0,0.0001d0)
+initial_guess=(0.01d0,0.0001d0)
 
 ! Range of values to scan over in kz:
-kzrange=0.01d0,0.21d0
+krange=0.01d0,0.21d0
 
 ! Number of steps to scan over kzrange:
-kzsteps=200
+ksteps=8
 
 ! Temperature anisotropy (Tperp/Tparallel)
 alpha=1.d0,1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
@@ -72,7 +72,10 @@ density=1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 vdrift=0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Angle of propagation (in degrees)
-theta=0.001d0
+theta_range=0.001d0,0.01d0
+
+! Steps in the theta direction
+theta_steps=8
 
 ! Alfven speed divided by speed of light
 vAc=1.d-4
@@ -123,4 +126,15 @@ damping=F
 !		with k * r from 0 ... 2 pi at a fixed time. We "fly" along the k-direction over one wave train.
 ! 		If set on .FALSE., periods does not make a difference
 const_r=T
+
+! Whether to write moments to a file or not
+output_mom=T
+! Whether to write E & B vectors to a file or not
+output_EB=T
+
+! Whether to override the k,theta values specified above with the ones read from a file
+kth_file=T
+
+! Filename to read k, theta values from
+kth_filename='kth_kawtc'
 /

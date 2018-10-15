@@ -26,13 +26,13 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-subroutine write_delta_f(j,kz,x,pol,polz)
+subroutine write_delta_f(j,kk,x,pol,polz)
 use input_params
 use HDF5
 implicit none
 double complex :: deltaf,comp1,comp2,comp3,comp4,x,pol,polz,Avec(3),UStix,VStix,a
-double precision :: phi,vperp,vpar,dfdvpar,dfdvperp,kz,kperp,z,bessel,fnull,vx,vy,vz
-double precision :: time
+double precision :: phi,vperp,vpar,dfdvpar,dfdvperp,kk,kz,kperp,z,bessel,fnull,vx,vy,vz
+double precision :: time, theta
 real, allocatable :: VXarray(:,:,:),VYarray(:,:,:),VZarray(:,:,:),farray(:,:,:)
 real :: minf,maxf,maxdfim,mindfim
 integer :: i,k,l,j,m,timerun,mmaxrun,error
@@ -57,7 +57,8 @@ allocate(VZarray(vxsteps+1,vysteps+1,vzsteps+1))
 allocate(farray(vxsteps+1,vysteps+1,vzsteps+1))
 
 
-kperp=kz*tan(theta*M_PI/180.d0)
+kz=kk*cos(theta*M_PI/180.d0)
+kperp=kk*sin(theta*M_PI/180.d0)
 
 
 
