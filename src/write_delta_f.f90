@@ -188,10 +188,10 @@ do m=-mmaxrun,mmaxrun
 
 
 	UStix=dfdvperp+kz*(vperp*dfdvpar-vpar*dfdvperp)/x
-	VStix=kperp*(vperp*dfdvpar+vpar*dfdvperp)/x
+	VStix=kperp*(vperp*dfdvpar-vpar*dfdvperp)/x
 
 	comp1=Avec(1)*Ustix*(a*uniti*cos(phi)-Omega(j)*sin(phi))/(Omega(j)*Omega(j)-a*a)
-	comp2=Avec(2)*UStix*(a*uniti*sin(phi)-Omega(j)*cos(phi))/(Omega(j)*Omega(j)-a*a)
+	comp2=Avec(2)*UStix*(a*uniti*sin(phi)+Omega(j)*cos(phi))/(Omega(j)*Omega(j)-a*a)
 	comp3=-uniti*Avec(3)*dfdvpar/a
 	comp4=-Avec(3)*VStix*(a*uniti*cos(phi)-Omega(j)*sin(phi))/(Omega(j)*Omega(j)-a*a)
 
