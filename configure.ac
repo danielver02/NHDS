@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(NHDS, 1.4, d.verscharen@ucl.ac.uk)
+AC_INIT(NHDS, 1.5, d.verscharen@ucl.ac.uk)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(src/)
 

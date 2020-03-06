@@ -1,6 +1,6 @@
 This is NHDS - The New Hampshire Dispersion relation Solver
 
-Copyright (C) 2018 - Daniel Verscharen (d.verscharen@ucl.ac.uk)
+Copyright (C) 2019 - Daniel Verscharen (d.verscharen@ucl.ac.uk)
 Mullard Space Science Laboratory, University College London
 Space Science Center, University of New Hampshire
 
@@ -25,6 +25,6 @@ in the main directory. Then run NHDS with
 It is possible to install NHDS in the main binary directory through
 
     sudo make install
-    
+
 The plasma and numerical parameters are set in the file <input_file.in>.
 The code requires only the folder src in the main directory.
