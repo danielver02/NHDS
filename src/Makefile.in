@@ -103,7 +103,8 @@ am_NHDS_OBJECTS = NHDS.$(OBJEXT) calc_polarization.$(OBJEXT) \
 	newton_method.$(OBJEXT) parameters.$(OBJEXT) suscep.$(OBJEXT) \
 	waveenergy.$(OBJEXT) write_delta_f.$(OBJEXT)
 NHDS_OBJECTS = $(am_NHDS_OBJECTS)
-NHDS_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+NHDS_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -239,8 +240,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_FCFLAGS = -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -I$(HDF5_INC)
-AM_LDFLAGS = -ldl -L$(HDF5_LIB) $(HDF5_LDFLAGS)
+AM_FCFLAGS = -I$(HDF5_INC) -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
+NHDS_LDADD = -L$(HDF5_LIB) $(HDF5_LDFLAGS)
 NHDS_SOURCES = NHDS.f90 calc_polarization.f90 calc_xi.f90 dispfunct.f90 disptensor.f90 newton_method.f90 parameters.f90 suscep.f90 waveenergy.f90 write_delta_f.f90
 all: all-am
 
@@ -255,9 +256,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/Makefile
+	  $(AUTOMAKE) --gnu src/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
