@@ -1,6 +1,6 @@
 This is NHDS - The New Hampshire Dispersion relation Solver
 
-Copyright (C) 2019 - Daniel Verscharen (d.verscharen@ucl.ac.uk)
+Copyright (C) 2020 - Daniel Verscharen (d.verscharen@ucl.ac.uk)
 Mullard Space Science Laboratory, University College London
 Space Science Center, University of New Hampshire
 
@@ -11,11 +11,13 @@ NHDS has the following requirements:
 
     make
     Fortran 90 compiler
-    HDF5
+    HDF5 (although it can now also be compiled without HDF5)
 
 Compile the code by executing
 
+    ./configure                                  (if you do not want to use HDF5 capabilities)
     ./configure --with-hdf5=/path/to/hdf5        (this could be: "/usr/local/hdf5" on a Mac)
+
     make
 
 in the main directory. Then run NHDS with

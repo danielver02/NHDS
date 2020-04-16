@@ -98,13 +98,23 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_NHDS_OBJECTS = NHDS.$(OBJEXT) calc_polarization.$(OBJEXT) \
-	calc_xi.$(OBJEXT) dispfunct.$(OBJEXT) disptensor.$(OBJEXT) \
-	newton_method.$(OBJEXT) parameters.$(OBJEXT) suscep.$(OBJEXT) \
-	waveenergy.$(OBJEXT) write_delta_f.$(OBJEXT)
+am__NHDS_SOURCES_DIST = NHDS.f90 calc_polarization.f90 calc_xi.f90 \
+	dispfunct.f90 disptensor.f90 newton_method.f90 parameters.f90 \
+	suscep.f90 waveenergy.f90 NHDS_with_hdf5.f90 write_delta_f.f90
+@WITH_HDF5_FALSE@am_NHDS_OBJECTS = NHDS.$(OBJEXT) \
+@WITH_HDF5_FALSE@	calc_polarization.$(OBJEXT) calc_xi.$(OBJEXT) \
+@WITH_HDF5_FALSE@	dispfunct.$(OBJEXT) disptensor.$(OBJEXT) \
+@WITH_HDF5_FALSE@	newton_method.$(OBJEXT) parameters.$(OBJEXT) \
+@WITH_HDF5_FALSE@	suscep.$(OBJEXT) waveenergy.$(OBJEXT)
+@WITH_HDF5_TRUE@am_NHDS_OBJECTS = NHDS_with_hdf5.$(OBJEXT) \
+@WITH_HDF5_TRUE@	write_delta_f.$(OBJEXT) \
+@WITH_HDF5_TRUE@	calc_polarization.$(OBJEXT) calc_xi.$(OBJEXT) \
+@WITH_HDF5_TRUE@	dispfunct.$(OBJEXT) disptensor.$(OBJEXT) \
+@WITH_HDF5_TRUE@	newton_method.$(OBJEXT) parameters.$(OBJEXT) \
+@WITH_HDF5_TRUE@	suscep.$(OBJEXT) waveenergy.$(OBJEXT)
 NHDS_OBJECTS = $(am_NHDS_OBJECTS)
 am__DEPENDENCIES_1 =
-NHDS_DEPENDENCIES = $(am__DEPENDENCIES_1)
+@WITH_HDF5_TRUE@NHDS_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -131,7 +141,7 @@ am__v_FCLD_ = $(am__v_FCLD_@AM_DEFAULT_V@)
 am__v_FCLD_0 = @echo "  FCLD    " $@;
 am__v_FCLD_1 = 
 SOURCES = $(NHDS_SOURCES)
-DIST_SOURCES = $(NHDS_SOURCES)
+DIST_SOURCES = $(am__NHDS_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -240,9 +250,17 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_FCFLAGS = -I$(HDF5_INC) -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
-NHDS_LDADD = -L$(HDF5_LIB) $(HDF5_LDFLAGS)
-NHDS_SOURCES = NHDS.f90 calc_polarization.f90 calc_xi.f90 dispfunct.f90 disptensor.f90 newton_method.f90 parameters.f90 suscep.f90 waveenergy.f90 write_delta_f.f90
+@WITH_HDF5_FALSE@AM_FCFLAGS = -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
+@WITH_HDF5_TRUE@AM_FCFLAGS = -I$(HDF5_INC) -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
+@WITH_HDF5_TRUE@NHDS_LDADD = -L$(HDF5_LIB) $(HDF5_LDFLAGS)
+@WITH_HDF5_FALSE@NHDS_SOURCES = NHDS.f90 calc_polarization.f90 \
+@WITH_HDF5_FALSE@	calc_xi.f90 dispfunct.f90 disptensor.f90 \
+@WITH_HDF5_FALSE@	newton_method.f90 parameters.f90 suscep.f90 \
+@WITH_HDF5_FALSE@	waveenergy.f90
+@WITH_HDF5_TRUE@NHDS_SOURCES = NHDS_with_hdf5.f90 write_delta_f.f90 \
+@WITH_HDF5_TRUE@	calc_polarization.f90 calc_xi.f90 \
+@WITH_HDF5_TRUE@	dispfunct.f90 disptensor.f90 newton_method.f90 \
+@WITH_HDF5_TRUE@	parameters.f90 suscep.f90 waveenergy.f90
 all: all-am
 
 .SUFFIXES:

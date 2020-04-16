@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2019 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2020 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-subroutine write_delta_f(j,kk,x,pol,polz)
+subroutine write_delta_f(j,kk,theta,x,pol,polz)
 use input_params
 use HDF5
 implicit none
@@ -59,7 +59,6 @@ allocate(farray(vxsteps+1,vysteps+1,vzsteps+1))
 
 kz=kk*cos(theta*M_PI/180.d0)
 kperp=kk*sin(theta*M_PI/180.d0)
-
 
 
 if (ampl_mode.EQ.1) then
@@ -199,7 +198,6 @@ do m=-mmaxrun,mmaxrun
 
 enddo ! end m loop
 
-
 if (const_r) then
 	if (damping) then
 		deltaf=deltaf*exp(-uniti*time*x)
@@ -209,7 +207,6 @@ if (const_r) then
 else
 	deltaf=deltaf*exp(uniti*2.d0*M_PI*(1.d0*timerun)/(1.d0*timesteps))
 endif
-
 
 
 

@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2019 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2020 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ character*30, intent(in) :: filename
 nameList /parameters/ &
     numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, krange,&
     ksteps, alpha, beta, charge, mass, density, vdrift, theta_range, theta_steps,&
-    vAc, ampl_mode, ampl, output_warning, mmax, Bessel_zero_deltaf, vxsteps,&
+    vAc, ampl_mode, ampl, output_warning, mmax, output_df, species_df, Bessel_zero_deltaf, vxsteps,&
     vysteps, vzsteps, vxrange, vyrange, vzrange, timesteps, periods, num_periods,&
     damping, const_r, output_mom, output_EB, kth_file, kth_filename
 

@@ -188,5 +188,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    write (10,'(3F10.5,7E14.5)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
                           real(polz), aimag(polz), energy, quality
 
+  if (output_df) call write_delta_f(species_df,kk,theta,x,pol,polz) ! first parameter is index of species
+
 
 end subroutine compute

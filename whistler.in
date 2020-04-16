@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2018 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2020 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -91,6 +91,12 @@ ampl=-1.d0
 output_warning=.FALSE.
 
 !! The following parameters are used to determine delta f in write_delta_f:
+! Write delta f or not:
+output_df=F
+
+! Species for output of delta f:
+species_df=1
+
 ! Maximum of sum in Bessel function:
 ! can be very low (e.g., 3) for quasi-parallel propagation
 mmax=1000
@@ -127,6 +133,8 @@ damping=F
 !         If set on .FALSE., periods does not make a difference
 const_r=T
 
+
+!! Input/Output commands:
 ! Write moments to a file or not:
 output_mom=T
 

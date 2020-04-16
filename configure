@@ -2956,10 +2956,12 @@ if test -n "$WITH_HDF5"; then
   HDF5_INC="$HDF5PATH/include"
   HDF5_LIB="$HDF5PATH/lib"
   HDF5_LDFLAGS="$HDF5_LIB/libhdf5_fortran.a $HDF5_LIB/libhdf5.a -lz"
+
+
+  LD_LIBRARY_PATH="$HDF5_LIB:$LD_LIBRARY_PATH"
+
+
 fi
-
-
-LD_LIBRARY_PATH="$HDF5_LIB:$LD_LIBRARY_PATH"
 
 
 
