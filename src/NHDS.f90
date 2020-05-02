@@ -89,7 +89,8 @@ write (10,*) '# kk, theta, omega, gamma, Re(Ey/Ex), Im(Ey/Ex), Re(Ez/Ex), Im(Ez/
 
 if (output_mom) then
   open(unit=11,file='output_'//trim(filename)//'_plasma.dat',status='replace',action='write')
-   write (11,*) '# kk, theta, j, Re(dn), Im(dn), Re(dUperpx), Im(dUperpx), Re(dUperpy), Im(dUperpy), Re(dUpar), Im(dUpar)'
+   write (11,*) '# kk, theta, j, Re(dn), Im(dn), Re(dUperpx), Im(dUperpx), Re(dUperpy), Im(dUperpy), Re(dUpar), &
+            Im(dUpar), Re(dpper), Im(dpperp), Re(dppar), Im(dppar)'
 endif
 if (output_EB) then
   open(unit=12,file='output_'//trim(filename)//'_EB.dat',status='replace',action='write')
@@ -122,8 +123,8 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    double precision, intent(in) :: kk, theta
    double complex, intent(inout) :: x
    logical, intent(in) :: outputm, outputeb
-   double complex :: pol,polz,xi,deltaRj, Ek(3), Bk(3)
-   double complex :: dUperpx,dUperpy,dUpar, Avec(3)
+   double complex :: pol,polz,xi,Ek(3), Bk(3)
+   double complex :: dUperpx,dUperpy,dUpar,dpperp,dppar,Avec(3)
    double precision :: kperp,kz,energy,gamma_contribution(10)
    real :: quality
    integer :: j
@@ -140,11 +141,12 @@ subroutine compute(kk,theta,x,outputm,outputeb)
      do j=1,numspec
        call calc_xi(xi,j,pol,polz,x,kz,kperp)
        ! second parameter is index of species
-       call calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
+       call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
        ! fifth parameter is index of species
-       write(11,'(2F14.5,I3,8F14.5)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
+       write(11,'(2F10.5,I3,12F14.5)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
                             aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
-                            real(dUpar), aimag(dUpar)
+                            real(dUpar), aimag(dUpar), real(dpperp), aimag(dpperp), &
+                            real(dppar), aimag(dppar)
      enddo
    endif
 
@@ -176,7 +178,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
       Bk(2)=(kz*Ek(1)-kperp*Ek(3))/(x*vAc)
       Bk(3)=kperp*Ek(2)/(x*vAc)
 
-      write(12,'(14E14.5)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
+      write(12,'(2F10.5,12E14.5)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
                           ,aimag(Ek(2)), real(Ek(3)), aimag(Ek(3)), real(Bk(1))&
                           ,aimag(Bk(1)), real(Bk(2)), aimag(Bk(2)), real(Bk(3))&
                           ,aimag(Bk(3))
@@ -184,8 +186,8 @@ subroutine compute(kk,theta,x,outputm,outputeb)
 
 !  write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),&
 !                        real(polz),aimag(polz),energy,quality
-   write (*, '(3F10.5,3E14.5)' ) kk, theta, real(x), aimag(x), quality
-   write (10,'(3F10.5,7E14.5)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
+   write (*, '(2F10.5,3E14.5)' ) kk, theta, real(x), aimag(x), quality
+   write (10,'(2F10.5,8E14.5)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
                           real(polz), aimag(polz), energy, quality
 
 

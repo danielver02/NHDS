@@ -68,11 +68,11 @@ end subroutine
 
 
 
-subroutine calc_fluctRj(deltaRj,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
+subroutine calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
 use input_params
 implicit none
 double precision :: kz,kperp,z,besselI,BInz,dBInzdz,d2BInzdz2
-double complex :: x,pol,polz,Avec(3),dispfunct,zeta,deltaRj,chi(3,3)
+double complex :: x,pol,polz,Avec(3),dispfunct,zeta,chi(3,3)
 double complex :: Z0,Z1,Z2,Z3,dpperp,dppar,Exterm,Eyterm,Ezterm,dUpar
 double complex :: dUperpx,dUperpy,Ubar
 logical :: kpos,Bessel_run
@@ -146,8 +146,8 @@ if ((n.GE.nmax).AND.(output_warning)) then
 endif
 
 
-! dpperp is deltapperp^2 / ampl in units of the magnetic background pressure
-! dppar is deltappar^2 / ampl in units of the magnetic background pressure.
+! dpperp is deltapperp in units of the magnetic background pressure
+! dppar is deltappar in units of the magnetic background pressure.
 
 dpperp=0.d0
 dppar=0.d0
@@ -215,11 +215,8 @@ do n=-nmaxrun,nmaxrun
 enddo
 
 
-dpperp=-2.d0*uniti*mass(j)*density(j)*Omega(j)*dpperp*exp(-z)/(kz*vtherm(j))
-dppar=-4.d0*uniti*mass(j)*density(j)*Omega(j)*dppar*exp(-z)/(kz*vtherm(j))
+dpperp=-2.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dpperp*exp(-z)/(kz*vtherm(j))
+dppar=-4.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dppar*exp(-z)/(kz*vtherm(j))
 
-
-deltaRj = (vtherm(j)*vtherm(j)*alpha(j)+ampl*dpperp/(density(j)*mass(j)))
-deltaRj = deltaRj /(vtherm(j)*vtherm(j)+ampl*dppar/(density(j)*mass(j)))
 
 end subroutine
