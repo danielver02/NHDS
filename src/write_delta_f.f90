@@ -42,7 +42,7 @@ integer(HID_T) :: dset1_id,dset2_id,dset3_id,dset4_id       ! Dataset identifier
 integer(HID_T) :: dspace1_id,dspace2_id,dspace3_id,dspace4_id      ! Dataspace identifier
 integer(HSIZE_T) :: dims(3) ! Dataset dimensions
 integer ::   rank=3 ! Dataset rank
-character(LEN=19) :: filename ! File name for the HDF5 file
+character(LEN=300) :: filename ! File name for the HDF5 file
 character(LEN=3) :: timestring
 character(LEN=2), PARAMETER :: dset1name = "VX"     ! Dataset name
 character(LEN=2), PARAMETER :: dset2name = "VY"     ! Dataset name

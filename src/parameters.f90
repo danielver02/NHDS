@@ -29,7 +29,7 @@
 subroutine set_parameters(filename)
 use input_params
 implicit none
-character*30, intent(in) :: filename
+character*300, intent(in) :: filename
 
 
 nameList /parameters/ &

@@ -37,7 +37,7 @@ module input_params
   double complex, parameter ::  uniti=(0.d0,1.d0)
   double precision,parameter :: M_PI=3.141592654d0
   logical :: output_warning,damping,periods,const_r,output_mom,output_EB,kth_file,output_df
-  character*20 :: kth_filename
+  character*300 :: kth_filename
 end module input_params
 
 program NHDS
@@ -48,7 +48,7 @@ double complex :: x
 double precision, allocatable, dimension(:) :: kk,theta
 double complex, allocatable, dimension(:) :: guesses
 double precision :: dk, dth
-character*30 :: filename
+character*300 :: filename
 
 dk=0.; dth=0.
 call get_command_argument(1,filename); filename=adjustl(filename)
@@ -143,7 +143,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
        ! second parameter is index of species
        call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
        ! fifth parameter is index of species
-       write(11,'(2F10.5,I3,12F14.5)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
+       write(11,'(2F10.5,I3,12ES20.10E3)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
                             aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
                             real(dUpar), aimag(dUpar), real(dpperp), aimag(dpperp), &
                             real(dppar), aimag(dppar)
@@ -178,7 +178,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
       Bk(2)=(kz*Ek(1)-kperp*Ek(3))/(x*vAc)
       Bk(3)=kperp*Ek(2)/(x*vAc)
 
-      write(12,'(2F10.5,12E14.5)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
+      write(12,'(2F10.5,12ES20.10E3)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
                           ,aimag(Ek(2)), real(Ek(3)), aimag(Ek(3)), real(Bk(1))&
                           ,aimag(Bk(1)), real(Bk(2)), aimag(Bk(2)), real(Bk(3))&
                           ,aimag(Bk(3))
@@ -186,8 +186,8 @@ subroutine compute(kk,theta,x,outputm,outputeb)
 
 !  write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),&
 !                        real(polz),aimag(polz),energy,quality
-   write (*, '(2F10.5,3E14.5)' ) kk, theta, real(x), aimag(x), quality
-   write (10,'(2F10.5,8E14.5)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
+   write (*, '(2F10.5,3ES18.6E3)' ) kk, theta, real(x), aimag(x), quality
+   write (10,'(2F10.5,8ES20.10E3)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
                           real(polz), aimag(polz), energy, quality
 
    if (output_df) call write_delta_f(species_df,kk,theta,x,pol,polz) ! first parameter is index of species
