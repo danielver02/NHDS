@@ -45,7 +45,7 @@ nmax=1000
 Bessel_zero=1.d-50
 
 ! Initial guess for the frequency (complex number):
-initial_guess=(0.01d0,0.0001d0)
+initial_guess=(4.25d-2,-2.1d-4)
 
 ! Range of values to scan over in k:
 krange=0.01d0,0.21d0

@@ -46,7 +46,6 @@ implicit none
 integer :: j,i,l
 double complex :: x
 double precision, allocatable, dimension(:) :: kk,theta
-double complex, allocatable, dimension(:) :: guesses
 double precision :: dk, dth
 character*300 :: filename
 
@@ -58,12 +57,12 @@ allocate(kk(ksteps))
 if (kth_file) then
    ! if reading k,th values from file
    ! ksteps=theta_steps=number of (k,th) pairs in input file
-   allocate(theta(ksteps),guesses(ksteps))
+   allocate(theta(ksteps))
    kth_filename=adjustl(kth_filename)
    open(unit=793,file=kth_filename)
-   read(793,*) kk
-   read(793,*) theta
-   read(793,*) guesses
+   do i=1,ksteps
+      read(793,*) kk(i), theta(i)
+    enddo
    close(793)
 else
    allocate(theta(theta_steps))
@@ -98,8 +97,8 @@ if (output_EB) then
 endif
 
 if (kth_file) then
+   x=initial_guess ! guess w in units of wci:
    do i=1,ksteps
-      x = guesses(i)
       call compute(kk(i),theta(i),x,output_mom,output_EB)
    enddo
 else
