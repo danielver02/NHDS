@@ -85,7 +85,7 @@ vAc=1.d-4
 ampl_mode=1
 
 ! Amplitude for the calculation of polarization properties:
-ampl=-1.d0
+ampl=1.d0
 
 ! Print warnings to std. output and stop program in case of problems
 output_warning=.FALSE.
