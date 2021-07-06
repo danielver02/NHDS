@@ -125,7 +125,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    double complex :: pol,polz,xi,Ek(3), Bk(3)
    double complex :: dUperpx,dUperpy,dUpar,dpperp,dppar,Avec(3)
    double precision :: kperp,kz,energy,gamma_contribution(10)
-   real :: quality
+   double precision :: quality
    integer :: j
    kz=kk*cos(theta*M_PI/180.d0)
    kperp=kk*sin(theta*M_PI/180.d0)
@@ -142,7 +142,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
        ! second parameter is index of species
        call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
        ! fifth parameter is index of species
-       write(11,'(2F10.5,I3,12ES20.10E3)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
+       write(11,'(2F15.10,I3,12ES25.15E3)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
                             aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
                             real(dUpar), aimag(dUpar), real(dpperp), aimag(dpperp), &
                             real(dppar), aimag(dppar)
@@ -177,7 +177,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
       Bk(2)=(kz*Ek(1)-kperp*Ek(3))/(x*vAc)
       Bk(3)=kperp*Ek(2)/(x*vAc)
 
-      write(12,'(2F10.5,12ES20.10E3)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
+      write(12,'(2F15.10,12ES25.15E3)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
                           ,aimag(Ek(2)), real(Ek(3)), aimag(Ek(3)), real(Bk(1))&
                           ,aimag(Bk(1)), real(Bk(2)), aimag(Bk(2)), real(Bk(3))&
                           ,aimag(Bk(3))
@@ -186,7 +186,7 @@ subroutine compute(kk,theta,x,outputm,outputeb)
 !  write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),&
 !                        real(polz),aimag(polz),energy,quality
    write (*, '(2F10.5,3ES18.6E3)' ) kk, theta, real(x), aimag(x), quality
-   write (10,'(2F10.5,8ES20.10E3)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
+   write (10,'(2F15.10,8ES25.15E3)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
                           real(polz), aimag(polz), energy, quality
 
    if (output_df) call write_delta_f(species_df,kk,theta,x,pol,polz) ! first parameter is index of species

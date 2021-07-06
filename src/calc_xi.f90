@@ -59,10 +59,10 @@ call calc_chi(chi,j,kz,kperp,x)
 ! continuity equation (as in Stix 10-75)
 xi=kperp*(chi(1,1)*Avec(1)+chi(1,2)*Avec(2)+chi(1,3)*Avec(3))
 xi=xi+kz*(chi(3,1)*Avec(1)+chi(3,2)*Avec(2)+chi(3,3)*Avec(3))
-xi=-uniti*xi*ampl/(density(j)*charge(j))
+xi=-uniti*xi*ampl/(x*x*density(j)*charge(j))
 
 ! Normalization: chi is different by a factor vAc*vAc from Stix' definition:
-! our chi divided by (v_A/c)^2 is equal to Stix' chi.
+! our chi divided by (v_A/c)^2 ond x^2 is equal to Stix' chi.
 
 end subroutine
 
@@ -110,13 +110,13 @@ endif
 ! of delta f and lead to the same result.
 call calc_chi(chi,j,kz,kperp,x)
 dUpar=chi(3,1)*Avec(1)+chi(3,2)*Avec(2)+chi(3,3)*Avec(3)
-dUpar=-uniti*x*dUpar*ampl/(density(j)*charge(j))
+dUpar=-uniti*dUpar*ampl/(x*density(j)*charge(j))
 
 dUperpx=chi(1,1)*Avec(1)+chi(1,2)*Avec(2)+chi(1,3)*Avec(3)
-dUperpx=-uniti*x*dUperpx*ampl/(density(j)*charge(j))
+dUperpx=-uniti*dUperpx*ampl/(x*density(j)*charge(j))
 
 dUperpy=chi(2,1)*Avec(1)+chi(2,2)*Avec(2)+chi(2,3)*Avec(3)
-dUperpy=-uniti*x*dUperpy*ampl/(density(j)*charge(j))
+dUperpy=-uniti*dUperpy*ampl/(x*density(j)*charge(j))
 
 
 
@@ -124,7 +124,7 @@ dUperpy=-uniti*x*dUperpy*ampl/(density(j)*charge(j))
 Ubar=vdrift(j)!+dUpar
 
 ! Normalization: chi is different by a factor vAc*vAc from Stix' definition:
-! our chi divided by (v_A/c)^2 is equal to Stix' chi.
+! our chi divided by (v_A/c)^2 and by x^2 is equal to Stix' chi.
 
 ! dUperpx and dUperpy need to be small so that the following calculation is accurate.
 

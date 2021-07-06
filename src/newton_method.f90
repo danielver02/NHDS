@@ -31,9 +31,8 @@ use input_params
 implicit none
 double  complex :: determinant,prevx,x,detprevx,detx,jump
 integer :: iter
-double precision :: kperp,kz,dblabs
+double precision :: kperp,kz,dblabs,quality
 logical :: go_for_newton
-real :: quality
 
 prevx=x-1.d-5-1.d-5*uniti
 ! newton iteration for the secant method
@@ -58,7 +57,7 @@ if ((iter.GE.numiter).AND.(output_warning)) then
   stop
 endif
 
-quality=1.*dblabs(detx)
+quality=1.d0*dblabs(detx)
 
 end subroutine
 

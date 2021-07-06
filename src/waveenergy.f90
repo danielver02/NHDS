@@ -54,8 +54,8 @@ do j=1,numspec
   call calc_chi(chi,j,kz,kperp,xr-dx)
   do i=1,3
     do k=1,3
-      ep(i,k)=ep(i,k)+chi(i,k)
-      epprime(i,k)=epprime(i,k)+chiplus(i,k)
+      ep(i,k)=ep(i,k)+chi(i,k)/((xr-dx)*(xr-dx))
+      epprime(i,k)=epprime(i,k)+chiplus(i,k)/((xr+dx)*(xr+dx))
     enddo
   enddo
 enddo
@@ -76,8 +76,8 @@ do j=1,numspec
   do i=1,3
     do k=1,3
       !anti-hermitian part of the susceptibility:
-  	  chi_a(j,i,k)=(chi(i,k)-(real(chi(k,i))-uniti*aimag(chi(k,i))))/(2.d0*uniti)
-      ep(i,k)=ep(i,k)+chi(i,k)
+  	  chi_a(j,i,k)=(chi(i,k)-(real(chi(k,i))-uniti*aimag(chi(k,i))))/(2.d0*uniti*xr*xr)
+      ep(i,k)=ep(i,k)+chi(i,k)/(xr*xr)
     enddo
   enddo
 enddo

@@ -55,7 +55,7 @@ enddo
 
 !vAc is the Alfven speed in units of speed of light
 do i=1,3
-  ep(i,i)=ep(i,i)+vAc*vAc
+  ep(i,i)=ep(i,i)+vAc*vAc*x*x
 enddo
 
 do i=1,3
@@ -64,11 +64,11 @@ do i=1,3
   enddo
 enddo
 
-D(1,1)=D(1,1)-kz*kz/(x*x)
-D(1,3)=D(1,3)+kz*kperp/(x*x)
-D(2,2)=D(2,2)-(kperp*kperp+kz*kz)/(x*x)
-D(3,1)=D(3,1)+kz*kperp/(x*x)
-D(3,3)=D(3,3)-Kperp*kperp/(x*x)
+D(1,1)=D(1,1)-kz*kz
+D(1,3)=D(1,3)+kz*kperp
+D(2,2)=D(2,2)-(kperp*kperp+kz*kz)
+D(3,1)=D(3,1)+kz*kperp
+D(3,3)=D(3,3)-Kperp*kperp
 
 !now the tensor has been determined, the determinant has to vanish!
 

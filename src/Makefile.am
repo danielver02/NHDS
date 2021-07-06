@@ -1,8 +1,8 @@
 if WITH_HDF5
-AM_FCFLAGS = -I$(HDF5_INC) -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
+AM_FCFLAGS = -I$(HDF5_INC) -fbounds-check -ffpe-trap=invalid,zero,overflow -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
 NHDS_LDADD = -L$(HDF5_LIB) $(HDF5_LDFLAGS)
 else
-AM_FCFLAGS = -fbounds-check -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
+AM_FCFLAGS = -fbounds-check -ffpe-trap=invalid,zero,overflow -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
 endif
 
 
