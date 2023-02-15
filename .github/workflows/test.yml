@@ -1,0 +1,43 @@
+name: Test building
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install FORTRAN on macOS
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        brew install gcc
+        # For some reason GitHub actions can't find gfortran unless
+        # we explicitly link it
+        brew link gcc
+        ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
+
+    - name: Build NHDS on Ubuntu
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        autoreconf -f -i
+        ./configure
+        make
+
+    - name: Build NHDS on macOS
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        ./configure
+        make
+
+    - name: Run NHDS
+      run: bash ./src/NHDS whistler.in
