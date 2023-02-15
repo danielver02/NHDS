@@ -1,10 +1,11 @@
-if WITH_HDF5
-AM_FCFLAGS = -I$(HDF5_INC) -fbounds-check -ffpe-trap=invalid,zero,overflow -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
-NHDS_LDADD = -L$(HDF5_LIB) $(HDF5_LDFLAGS)
-else
-AM_FCFLAGS = -fbounds-check -ffpe-trap=invalid,zero,overflow -O2 -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -ldl
-endif
+NHDS_LDADD = -lm -ldl
 
+if WITH_HDF5
+AM_FCFLAGS = -I$(HDF5_INC) -O4 -fbounds-check -ffpe-trap=invalid,zero,overflow -ffixed-line-length-none -ffree-line-length-none -Wunused  -g
+NHDS_LDADD += -L$(HDF5_LIB) $(HDF5_LDFLAGS)
+else
+AM_FCFLAGS = -fbounds-check -O4 -ffpe-trap=invalid,zero,overflow -ffixed-line-length-none -ffree-line-length-none -Wunused -g
+endif
 
 bin_PROGRAMS = NHDS
 
