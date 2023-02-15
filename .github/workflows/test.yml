@@ -40,4 +40,4 @@ jobs:
         make
 
     - name: Run NHDS
-      run: bash ./src/NHDS whistler.in
+      run: ./src/NHDS whistler.in
