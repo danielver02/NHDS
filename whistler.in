@@ -28,7 +28,7 @@
 &parameters
 ! Number of species
 ! (up to 10 species are possible)
-numspec=3
+numspec=2
 
 ! Maximum number of iterations in the Newton method
 numiter=1000
@@ -45,37 +45,37 @@ nmax=500
 Bessel_zero=1.d-50
 
 ! Initial guess for the frequency (complex number):
-initial_guess=(0.2d0,-0.000001d0)
+initial_guess=(0.23d0,-0.000001d0)
 
 ! Range of values to scan over in k:
-krange=0.1d0,40.d0
+krange=0.2d0,4.d0
 
 ! Number of steps to scan over krange:
-ksteps=700
+ksteps=150
 
 ! Range of angle of propagation (in degrees)
-theta_range=51.00d0,51.001d0
+theta_range=0.01d0,0.01d0
 
 ! Steps in the theta direction
 theta_steps=1
 
 ! Temperature anisotropy (Tperp/Tparallel)
-alpha=1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+alpha=1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Parallel beta of the species
-beta=1.d0,0.9d0,0.1d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+beta=1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Charge of the species in units of the first ion charge
-charge=1.d0,-1.d0,-1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+charge=1.d0,-1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Mass of the species in units of ion mass
-mass=1.d0,5.446623d-4,5.446623d-4,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+mass=1.d0,5.446623d-4,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Density of the species in units of proton density
-density=1.d0,0.9d0,0.1d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+density=1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Drift speed of the species in units of proton Alfven speed
-vdrift=0.d0,-10.111111111111d0,91.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+vdrift=0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
 
 ! Alfven speed divided by speed of light
 vAc=1.d-4

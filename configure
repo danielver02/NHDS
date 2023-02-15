@@ -2432,6 +2432,7 @@ fi
 
 
 
+: ${FCFLAGS=""}
 
 # Checks for programs.
 ac_ext=${ac_fc_srcext-f}

@@ -6,6 +6,7 @@ AC_INIT(NHDS, 1.5, d.verscharen@ucl.ac.uk)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(src/)
 
+: ${FCFLAGS=""}
 
 # Checks for programs.
 AC_PROG_FC([h5fc f90 fort gfortran])
