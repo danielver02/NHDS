@@ -1,0 +1,10 @@
+# Ignore files built by make
+*.mod
+*.o
+NHDS
+*.dSYM
+# output files
+output_*
+# autoconf files
+Makefile
+config.status
