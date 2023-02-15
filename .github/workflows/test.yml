@@ -36,6 +36,7 @@ jobs:
     - name: Build NHDS on macOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
+        chmod a+x configure
         ./configure
         make
 
