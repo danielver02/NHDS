@@ -39,7 +39,52 @@ nameList /parameters/ &
     vysteps, vzsteps, vxrange, vyrange, vzrange, timesteps, periods, num_periods,&
     damping, const_r, output_mom, output_EB, kth_file, kth_filename
 
-   !write(*,*) filename
+
+    ! Define the standard parameters:
+    numspec=2
+    numiter=1000
+    det_D_threshold=1.d-16
+    nmax=500
+    Bessel_zero=1.d-50
+    initial_guess=(0.d0,0.d0)
+    krange=(/0.1d0,1.d0/)
+    ksteps=150
+    theta_range=(/0.01d0,0.01d0/)
+    theta_steps=1
+    alpha=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    beta=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    charge=(/1.d0,-1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    mass=(/1.d0,5.446623d-4,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    density=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    vdrift=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    vAc=1.d-4
+    ampl_mode=1
+    ampl=1.d0
+    output_warning=.FALSE.
+    output_df=.FALSE.
+    species_df=1
+    mmax=1000
+    Bessel_zero_deltaf=1.d-50
+    vxsteps=1
+    vysteps=1
+    vzsteps=1
+    vxrange=(/-1.d0,1.d0/)
+    vyrange=(/-1.d0,1.d0/)
+    vzrange=(/-1.d0,1.d0/)
+    timesteps=40
+    periods=.TRUE.
+    num_periods=8
+    damping=.FALSE.
+    const_r=.TRUE.
+    output_mom=.TRUE.
+    output_EB=.TRUE.
+    kth_file=.FALSE.
+    kth_filename=''
+
+
+
+
+
     open (unit=5,file=trim(filename),status='old',action='read')
     read (unit=5,nml=parameters)
     close(5)
