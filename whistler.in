@@ -39,7 +39,7 @@ det_D_threshold=1.d-16
 
 ! Maximum of sum in Bessel functions (both regular and modified)
 ! can be very low (e.g., 3) for quasi-parallel propagation
-nmax=500
+nmax=200
 
 ! If I_n is less than this value, higher n are neglected:
 Bessel_zero=1.d-50
