@@ -26,32 +26,14 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-subroutine calc_xi(xi,j,pol,polz,x,kz,kperp)
+subroutine calc_xi(xi,j,Avec,x,kz,kperp)
 use input_params
 implicit none
 double precision :: kz,kperp
-double complex :: x,pol,polz,Avec(3),xi,chi(3,3)
+double complex :: x,Avec(3),xi,chi(3,3)
 integer :: j
 
 ! This subroutine calculates the quantity xi in dn/n_0 = xi * dB_(x,y,z)/B_0
-
-
-if (ampl_mode.EQ.1) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_x
-	Avec(1)=uniti*x/(kz*pol)
-	Avec(2)=-x/kz
-	Avec(3)=polz*uniti*x/(kz*pol)
-else if (ampl_mode.EQ.2) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_y
-	Avec(1)=x/(kz-polz*kperp)
-	Avec(2)=uniti*pol*x/(kz-polz*kperp)
-	Avec(3)=x/((kz/polz)-kperp)
-else if (ampl_mode.EQ.3) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_z
-	Avec(1)=-uniti*x/(kperp*pol)
-	Avec(2)=x/kperp
-	Avec(3)=-uniti*x*polz/(kperp*pol)
-endif
 
 
 call calc_chi(chi,j,kz,kperp,x)
@@ -68,11 +50,11 @@ end subroutine
 
 
 
-subroutine calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
+subroutine calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
 use input_params
 implicit none
 double precision :: kz,kperp,z,besselI,BInz,dBInzdz,d2BInzdz2
-double complex :: x,pol,polz,Avec(3),dispfunct,zeta,chi(3,3)
+double complex :: x,Avec(3),dispfunct,zeta,chi(3,3)
 double complex :: Z0,Z1,Z2,Z3,dpperp,dppar,Exterm,Eyterm,Ezterm,dUpar
 double complex :: dUperpx,dUperpy,Ubar
 logical :: kpos,Bessel_run
@@ -88,22 +70,6 @@ kpos=.TRUE.
 if (kz.LT.0.d0) kpos=.FALSE.
 
 
-if (ampl_mode.EQ.1) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_x
-	Avec(1)=uniti*x/(kz*pol)
-	Avec(2)=-x/kz
-	Avec(3)=polz*uniti*x/(kz*pol)
-else if (ampl_mode.EQ.2) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_y
-	Avec(1)=x/(kz-polz*kperp)
-	Avec(2)=uniti*pol*x/(kz-polz*kperp)
-	Avec(3)=x/((kz/polz)-kperp)
-else if (ampl_mode.EQ.3) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_z
-	Avec(1)=-uniti*x/(kperp*pol)
-	Avec(2)=x/kperp
-	Avec(3)=-uniti*x*polz/(kperp*pol)
-endif
 
 ! This is for the calculation of dUpar and dUperp from the definition of the current density
 ! and the susceptibility. These expressions are equivalent to taking the first moment

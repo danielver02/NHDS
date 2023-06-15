@@ -89,7 +89,7 @@ write (10,*) '# kk, theta, omega, gamma, Re(Ey/Ex), Im(Ey/Ex), Re(Ez/Ex), Im(Ez/
 if (output_mom) then
   open(unit=11,file='output_'//trim(filename)//'_plasma.dat',status='replace',action='write')
    write (11,*) '# kk, theta, j, Re(dn), Im(dn), Re(dUperpx), Im(dUperpx), Re(dUperpy), Im(dUperpy), Re(dUpar), &
-            Im(dUpar), Re(dpper), Im(dpperp), Re(dppar), Im(dppar)'
+            Im(dUpar), Re(dpper), Im(dpperp), Re(dppar), Im(dppar), gamma_contribution, heating rate'
 endif
 if (output_EB) then
   open(unit=12,file='output_'//trim(filename)//'_EB.dat',status='replace',action='write')
@@ -122,60 +122,34 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    double precision, intent(in) :: kk, theta
    double complex, intent(inout) :: x
    logical, intent(in) :: outputm, outputeb
-   double complex :: pol,polz,xi,Ek(3), Bk(3)
+   double complex :: Avec(3),xi,Ek(3), Bk(3)
    double complex :: dUperpx,dUperpy,dUpar,dpperp,dppar,Avec(3)
-   double precision :: kperp,kz,energy,gamma_contribution(10)
+   double precision :: kperp,kz,energy,gamma_contribution(10), heating(10)
    double precision :: quality
    integer :: j
    kz=kk*cos(theta*M_PI/180.d0)
    kperp=kk*sin(theta*M_PI/180.d0)
 
    call newton_method(x,kz,kperp,quality)
-   call calc_polarization(pol,polz,x,kz,kperp)
-   call waveenergy(energy,x,kz,kperp,gamma_contribution)
+   call calc_polarization(Avec,Ek,Bk,x,kz,kperp)
+   call waveenergy(energy,x,kz,kperp,gamma_contribution,heating)
 
 !  if (i .eq. 1) initial_guess=x
 
    if (outputm) then
      do j=1,numspec
-       call calc_xi(xi,j,pol,polz,x,kz,kperp)
+       call calc_xi(xi,j,Avec,x,kz,kperp)
        ! second parameter is index of species
-       call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,pol,polz,x,kz,kperp)
+       call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
        ! fifth parameter is index of species
-       write(11,'(ES25.15E3,F15.10,I3,12ES25.15E3)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
+       write(11,'(ES25.15E3,F15.10,I3,14ES25.15E3)') kk, theta, j, real(xi), aimag(xi), real(dUperpx), &
                             aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
                             real(dUpar), aimag(dUpar), real(dpperp), aimag(dpperp), &
-                            real(dppar), aimag(dppar)
+                            real(dppar), aimag(dppar), gamma_contribution(j), heating(j)
      enddo
    endif
 
    if (outputeb) then
-
-     if (ampl_mode.EQ.1) then
-     	! Avec fulfills the equation  c * dE = Avec * vA * dB_x
-     	Avec(1)=uniti*x/(kz*pol)
-     	Avec(2)=-x/kz
-     	Avec(3)=polz*uniti*x/(kz*pol)
-     else if (ampl_mode.EQ.2) then
-     	! Avec fulfills the equation  c * dE = Avec * vA * dB_y
-     	Avec(1)=x/(kz-polz*kperp)
-     	Avec(2)=uniti*pol*x/(kz-polz*kperp)
-     	Avec(3)=x/((kz/polz)-kperp)
-     else if (ampl_mode.EQ.3) then
-     	! Avec fulfills the equation  c * dE = Avec * vA * dB_z
-     	Avec(1)=-uniti*x/(kperp*pol)
-     	Avec(2)=x/kperp
-     	Avec(3)=-uniti*x*polz/(kperp*pol)
-     endif
-
-
-      Ek(1)=Avec(1)*vAc*ampl
-      Ek(2)=Avec(2)*vAc*ampl
-      Ek(3)=Avec(3)*vAc*ampl
-
-      Bk(1)=-kz*Ek(2)/(x*vAc)
-      Bk(2)=(kz*Ek(1)-kperp*Ek(3))/(x*vAc)
-      Bk(3)=kperp*Ek(2)/(x*vAc)
 
       write(12,'(ES25.15E3,F15.10,12ES25.15E3)') kk, theta,   real(Ek(1)), aimag(Ek(1)), real(Ek(2))&
                           ,aimag(Ek(2)), real(Ek(3)), aimag(Ek(3)), real(Bk(1))&
@@ -186,10 +160,11 @@ subroutine compute(kk,theta,x,outputm,outputeb)
 !  write (*, '(10F9.5)') kk(i),theta(j),real(x),aimag(x),real(pol),aimag(pol),&
 !                        real(polz),aimag(polz),energy,quality
    write (*, '(ES18.6E3,F10.5,3ES18.6E3)' ) kk, theta, real(x), aimag(x), quality
-   write (10,'(ES25.15E3,F15.10,8ES25.15E3)') kk, theta, real(x), aimag(x), real(pol*uniti), aimag(pol*uniti),&
-                          real(polz), aimag(polz), energy, quality
+   write (10,'(ES25.15E3,F15.10,8ES25.15E3)') kk, theta, real(x), aimag(x), real(Ek(2)/EK(1)), aimag(Ek(2)/EK(1)),&
+                          real(EK(3)/EK(1)), aimag(EK(3)/EK(1)), energy, quality
 
-   if (output_df) call write_delta_f(species_df,kk,theta,x,pol,polz) ! first parameter is index of species
+
+   if (output_df) call write_delta_f(species_df,kk,theta,x,Avec) ! first parameter is index of species
 
 
 end subroutine compute

@@ -26,11 +26,11 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-subroutine write_delta_f(j,kk,theta,x,pol,polz)
+subroutine write_delta_f(j,kk,theta,x,Avec)
 use input_params
 use HDF5
 implicit none
-double complex :: deltaf,comp1,comp2,comp3,comp4,x,pol,polz,Avec(3),UStix,VStix,a
+double complex :: deltaf,comp1,comp2,comp3,comp4,x,Avec(3),UStix,VStix,a
 double precision :: phi,vperp,vpar,dfdvpar,dfdvperp,kk,kz,kperp,z,bessel,fnull,vx,vy,vz
 double precision :: time, theta
 real, allocatable :: VXarray(:,:,:),VYarray(:,:,:),VZarray(:,:,:),farray(:,:,:)
@@ -60,23 +60,6 @@ allocate(farray(vxsteps+1,vysteps+1,vzsteps+1))
 kz=kk*cos(theta*M_PI/180.d0)
 kperp=kk*sin(theta*M_PI/180.d0)
 
-
-if (ampl_mode.EQ.1) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_x
-	Avec(1)=uniti*x/(kz*pol)
-	Avec(2)=-x/kz
-	Avec(3)=polz*uniti*x/(kz*pol)
-else if (ampl_mode.EQ.2) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_y
-	Avec(1)=x/(kz-polz*kperp)
-	Avec(2)=uniti*pol*x/(kz-polz*kperp)
-	Avec(3)=x/((kz/polz)-kperp)
-else if (ampl_mode.EQ.3) then
-	! Avec fulfills the equation  c * dE = Avec * vA * dB_z
-	Avec(1)=-uniti*x/(kperp*pol)
-	Avec(2)=x/kperp
-	Avec(3)=-uniti*x*polz/(kperp*pol)
-endif
 
 write (*,*) "# Writing distribution function to files output_deltafXXX.h5"
 call h5open_f(error)
