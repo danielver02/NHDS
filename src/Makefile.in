@@ -101,13 +101,13 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__NHDS_SOURCES_DIST = NHDS.f90 calc_polarization.f90 calc_xi.f90 \
 	dispfunct.f90 disptensor.f90 newton_method.f90 parameters.f90 \
-	suscep.f90 waveenergy.f90 NHDS_with_hdf5.f90 write_delta_f.f90
+	suscep.f90 waveenergy.f90 write_delta_f.f90
 @WITH_HDF5_FALSE@am_NHDS_OBJECTS = NHDS.$(OBJEXT) \
 @WITH_HDF5_FALSE@	calc_polarization.$(OBJEXT) calc_xi.$(OBJEXT) \
 @WITH_HDF5_FALSE@	dispfunct.$(OBJEXT) disptensor.$(OBJEXT) \
 @WITH_HDF5_FALSE@	newton_method.$(OBJEXT) parameters.$(OBJEXT) \
 @WITH_HDF5_FALSE@	suscep.$(OBJEXT) waveenergy.$(OBJEXT)
-@WITH_HDF5_TRUE@am_NHDS_OBJECTS = NHDS_with_hdf5.$(OBJEXT) \
+@WITH_HDF5_TRUE@am_NHDS_OBJECTS = NHDS.$(OBJEXT) \
 @WITH_HDF5_TRUE@	write_delta_f.$(OBJEXT) \
 @WITH_HDF5_TRUE@	calc_polarization.$(OBJEXT) calc_xi.$(OBJEXT) \
 @WITH_HDF5_TRUE@	dispfunct.$(OBJEXT) disptensor.$(OBJEXT) \
@@ -253,13 +253,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 NHDS_LDADD = -lm -ldl $(am__append_1)
-@WITH_HDF5_FALSE@AM_FCFLAGS = -fbounds-check -O4 -ffpe-trap=invalid,zero,overflow -ffixed-line-length-none -ffree-line-length-none -Wunused -g
-@WITH_HDF5_TRUE@AM_FCFLAGS = -I$(HDF5_INC) -O4 -fbounds-check -ffpe-trap=invalid,zero,overflow -ffixed-line-length-none -ffree-line-length-none -Wunused  -g
+@WITH_HDF5_FALSE@AM_FCFLAGS = -fbounds-check -O4 -ffpe-trap=invalid,zero,overflow -ffixed-line-length-none -ffree-line-length-none -Wunused -g -cpp
+@WITH_HDF5_TRUE@AM_FCFLAGS = -I$(HDF5_INC) -O4 -fbounds-check -ffpe-trap=invalid,zero,overflow -ffixed-line-length-none -ffree-line-length-none -Wunused  -g -cpp -DWITH_HDF5
 @WITH_HDF5_FALSE@NHDS_SOURCES = NHDS.f90 calc_polarization.f90 \
 @WITH_HDF5_FALSE@	calc_xi.f90 dispfunct.f90 disptensor.f90 \
 @WITH_HDF5_FALSE@	newton_method.f90 parameters.f90 suscep.f90 \
 @WITH_HDF5_FALSE@	waveenergy.f90
-@WITH_HDF5_TRUE@NHDS_SOURCES = NHDS_with_hdf5.f90 write_delta_f.f90 \
+@WITH_HDF5_TRUE@NHDS_SOURCES = NHDS.f90 write_delta_f.f90 \
 @WITH_HDF5_TRUE@	calc_polarization.f90 calc_xi.f90 \
 @WITH_HDF5_TRUE@	dispfunct.f90 disptensor.f90 newton_method.f90 \
 @WITH_HDF5_TRUE@	parameters.f90 suscep.f90 waveenergy.f90

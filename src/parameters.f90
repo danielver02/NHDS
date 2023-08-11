@@ -33,11 +33,11 @@ character*300, intent(in) :: filename
 
 
 nameList /parameters/ &
-    numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, krange,&
+    numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, scan_type, krange,&
     ksteps, alpha, beta, charge, mass, density, vdrift, theta_range, theta_steps,&
-    vAc, ampl_mode, ampl, output_warning, mmax, output_df, species_df, Bessel_zero_deltaf, vxsteps,&
-    vysteps, vzsteps, vxrange, vyrange, vzrange, timesteps, periods, num_periods,&
-    damping, const_r, output_mom, output_EB, kth_file, kth_filename
+    vAc, output_mom, output_EB, kth_file, kth_filename, ampl_mode, ampl, output_warning, &
+    mmax, output_df, species_df, Bessel_zero_deltaf, vxsteps, vysteps, vzsteps, vxrange, &
+    vyrange, vzrange, timesteps, periods, num_periods, damping, const_r
 
 
     ! Define the standard parameters:
@@ -47,6 +47,7 @@ nameList /parameters/ &
     nmax=500
     Bessel_zero=1.d-50
     initial_guess=(0.d0,0.d0)
+    scan_type=1
     krange=(/0.1d0,1.d0/)
     ksteps=150
     theta_range=(/0.01d0,0.01d0/)
@@ -58,6 +59,10 @@ nameList /parameters/ &
     density=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
     vdrift=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
     vAc=1.d-4
+    output_mom=.TRUE.
+    output_EB=.TRUE.
+    kth_file=.FALSE.
+    kth_filename=''
     ampl_mode=1
     ampl=1.d0
     output_warning=.FALSE.
@@ -76,10 +81,7 @@ nameList /parameters/ &
     num_periods=8
     damping=.FALSE.
     const_r=.TRUE.
-    output_mom=.TRUE.
-    output_EB=.TRUE.
-    kth_file=.FALSE.
-    kth_filename=''
+
 
 
 

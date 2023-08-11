@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2020 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2023 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ integer :: i,k,j
 
 
 xr=real(x)
-dx=1.d-6*xr
+dx=1.d-9*xr
 
 ep=0.d0
 epprime=0.d0
@@ -48,8 +48,8 @@ do j=1,numspec
   call calc_chi(chi,j,kz,kperp,xr-dx)
   do i=1,3
     do k=1,3
-      ep(i,k)=chi(i,k)/(vAc*vAc*(xr-dx)*(xr-dx))
-      epprime(i,k)=chiplus(i,k)/(vAc*vAc*(xr+dx)*(xr+dx))
+      ep(i,k)=ep(i,k)+chi(i,k)/(vAc*vAc*(xr-dx)*(xr-dx))
+      epprime(i,k)=epprime(i,k)+chiplus(i,k)/(vAc*vAc*(xr+dx)*(xr+dx))
     enddo
   enddo
 enddo
@@ -71,8 +71,8 @@ do j=1,numspec
   do i=1,3
     do k=1,3
       !anti-hermitian part of the susceptibility:
-  	  chi_a(j,i,k)=(chi(i,k)-(real(chi(k,i))-uniti*aimag(chi(k,i))))/(2.d0*uniti*vAc*vAc*xr*xr)
-      ep(i,k)=chi(i,k)/(vAc*vAc*xr*xr)
+  	  chi_a(j,i,k)=(chi(i,k)- conjg(chi(k,i)))/(2.d0*uniti*vAc*vAc*xr*xr)
+      ep(i,k)=ep(i,k)+chi(i,k)/(vAc*vAc*xr*xr)
     enddo
   enddo
 enddo
@@ -85,16 +85,13 @@ enddo
 call calc_polarization(Avec,Ek,Bk,x,kz,kperp)
 
 
-
 ! calculate Hermitian part only:
 do i=1,3
 	do k=1,3
-		eph(i,k)=(ep(i,k)+(1.d0*real(ep(k,i))-uniti*aimag(ep(k,i))))/2.d0
-		epprimeh(i,k)=(epprime(i,k)+(1.d0*real(epprime(k,i))-uniti*aimag(epprime(k,i))))/2.d0
+		eph(i,k)=(ep(i,k)+conjg(ep(k,i)))/2.d0
+		epprimeh(i,k)=(epprime(i,k)+conjg(epprime(k,i)))/2.d0
 	enddo
 enddo
-
-
 
 
 
@@ -111,9 +108,9 @@ enddo
 
 energy=0.d0
 do i=1,3
-	energy=energy+1.d0*real((1.d0*real(Ek(i))-uniti*aimag(Ek(i))*Ekmult(i)))
-	energy=energy+xr*real((1.d0*real(Ek(i))-uniti*aimag(Ek(i)))*Ekmultprime(i))
-	energy=energy+1.d0*real(Bk(i))**2+aimag(Bk(i))**2
+	energy=energy+1.d0*real(conjg(Ek(i))*Ekmult(i))
+	energy=energy+1.d0*real(xr*conjg(Ek(i))*Ekmultprime(i))
+	energy=energy+1.d0*real(conjg(Bk(i))*Bk(i))
 enddo
 
 energy=energy/(16.d0*M_PI)
@@ -128,11 +125,11 @@ do j=1,numspec
 	do k=1,3
 		do i=1,3
 			heating(j) = heating(j)+ &
-              1.d0*real((real(Ek(k))-uniti*aimag(Ek(k)))*chi_a(j,k,i)*Ek(i))
+              1.d0*real(conjg(Ek(k))*chi_a(j,k,i)*Ek(i))
 		enddo
 	enddo
   heating(j)=heating(j)/(4.d0*energy)
-  gamma_contribution(j)=heating(j)*xr/(4.d0*M_PI)
+  gamma_contribution(j)=-heating(j)*real(xr)/(4.d0*M_PI)
 enddo
 
 
