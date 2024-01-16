@@ -36,7 +36,7 @@ logical :: Bessel_run
 
 
 ! Check if you can use the cold-plasma dispersion relation:
-if (vtherm(j).EQ.0) then
+if (vtherm(j).EQ.0.d0) then
 
   call calc_chi_cold(chi,j,kz,kperp,x)
 
@@ -158,7 +158,7 @@ double precision :: kz,kperp
 integer :: j
 
 
-! This function calculates the susceptibilities based on the paper
+! This subroutine calculates the susceptibilities based on the paper
 ! Verscharen & Chandran, ApJ 764, 88, 2013
 
 dispR=-(1.d0/(ell(j)*ell(j)))*(x-kz*vdrift(j))/(x-kz*vdrift(j)+Omega(j))
