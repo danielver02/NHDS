@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2023 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,13 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-&parameters
+&species
 ! Number of species:
-! (up to 10 species are possible)
+! (ensure the species definitions below include a sufficient number of entries)
 numspec=2
+/
 
+&parameters
 ! Maximum number of iterations in the Newton method:
 numiter=1000
 
@@ -66,22 +68,23 @@ theta_range=0.001d0,0.01d0
 theta_steps=8
 
 ! Temperature anisotropy (Tperp/Tparallel):
-alpha=1.d0,1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+alpha=1.d0,1.d0
 
 ! Parallel beta of the species:
-beta=1.d0,1.d0,1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+! (if a species has beta=0.d0, the susceptibility is calculated with cold-plasma theory)
+beta=1.d0,1.d0
 
 ! Charge of the species in units of the first ion charge:
-charge=1.d0,-1.d0,2.d0,-1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+charge=1.d0,-1.d0
 
 ! Mass of the species in units of ion mass:
-mass=1.d0,5.446623d-4,4.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+mass=1.d0,5.446623d-4
 
 ! Density of the species in units of proton density:
-density=1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+density=1.d0,1.d0
 
 ! Drift speed of the species in units of proton Alfven speed:
-vdrift=0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0
+vdrift=0.d0,0.d0
 
 ! Alfven speed divided by speed of light
 vAc=1.d-4

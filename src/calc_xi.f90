@@ -84,6 +84,12 @@ dUperpx=-uniti*dUperpx*ampl/(x*density(j)*charge(j))
 dUperpy=chi(2,1)*Avec(1)+chi(2,2)*Avec(2)+chi(2,3)*Avec(3)
 dUperpy=-uniti*dUperpy*ampl/(x*density(j)*charge(j))
 
+if (vtherm(j).EQ.0.d0) then
+
+  dpperp=0.d0
+  dppar=0.d0
+
+else
 
 
 ! This is without dUpar:
@@ -183,6 +189,8 @@ enddo
 
 dpperp=-2.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dpperp*exp(-z)/(kz*vtherm(j))
 dppar=-4.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dppar*exp(-z)/(kz*vtherm(j))
+
+endif
 
 
 end subroutine

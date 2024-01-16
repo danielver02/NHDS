@@ -1,11 +1,10 @@
 # This is NHDS - The New Hampshire Dispersion relation Solver
 
-Copyright (C) 2020 - Daniel Verscharen (d.verscharen@ucl.ac.uk)\
+Copyright (C) 2024 - Daniel Verscharen (d.verscharen@ucl.ac.uk)\
 Mullard Space Science Laboratory, University College London\
 Space Science Center, University of New Hampshire
 
-NHDS solves the linear hot-plasma dispersion relation based on the Vlasov-Maxwell set of
-equations.
+NHDS solves the plasma dispersion relation. In its standard mode, it solves the hot-plasma dispersion relation based on the Vlasov-Maxwell set of equations assuming the plasma consists of a combination of species with drifting bi-Maxwellian background distributions. NHDS can also solve the cold-plasma dispersion relation (or treat the susceptibilities of individual species with cold-plasma theory).
 
 
 ## Requirements

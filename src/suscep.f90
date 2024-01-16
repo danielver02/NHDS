@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2023 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,14 @@ double complex :: chi(3,3),Y(3,3),Ynew(3,3),x
 double precision :: kz,kperp,z,besselI
 integer :: j,n,i,k,nmaxrun
 logical :: Bessel_run
+
+
+! Check if you can use the cold-plasma dispersion relation:
+if (vtherm(j).EQ.0) then
+
+  call calc_chi_cold(chi,j,kz,kperp,x)
+
+else
 
 z=0.5d0*(kperp*vtherm(j)/Omega(j))*(kperp*vtherm(j)/Omega(j))*alpha(j)
 
@@ -71,7 +79,6 @@ do n=-nmaxrun,nmaxrun
 enddo
 
 
-
 chi(1,1)=Y(1,1)/(ell(j)*ell(j))
 chi(1,2)=Y(1,2)/(ell(j)*ell(j))
 chi(1,3)=Y(1,3)/(ell(j)*ell(j))
@@ -82,7 +89,7 @@ chi(3,1)=Y(3,1)/(ell(j)*ell(j))
 chi(3,2)=Y(3,2)/(ell(j)*ell(j))
 chi(3,3)=2.d0*x*vdrift(j)/(ell(j)*ell(j)*kz*vtherm(j)*vtherm(j)*alpha(j))+Y(3,3)/(ell(j)*ell(j))
 
-
+endif
 
 end subroutine
 
@@ -141,6 +148,41 @@ Y(3,3)=2.d0*(x-1.d0*n*Omega(j))*BInz*Bn/(kz*vtherm(j)*vtherm(j)*alpha(j))
 end subroutine
 
 
+
+subroutine calc_chi_cold(chi,j,kz,kperp,x)
+use input_params
+implicit none
+double complex :: chi(3,3), x
+double complex :: dispR,dispL,dispP,dispJ,dispM
+double precision :: kz,kperp
+integer :: j
+
+
+! This function calculates the susceptibilities based on the paper
+! Verscharen & Chandran, ApJ 764, 88, 2013
+
+dispR=-(1.d0/(ell(j)*ell(j)))*(x-kz*vdrift(j))/(x-kz*vdrift(j)+Omega(j))
+dispL=-(1.d0/(ell(j)*ell(j)))*(x-kz*vdrift(j))/(x-kz*vdrift(j)-Omega(j))
+
+dispP=(x*x/((x-kz*vdrift(j))**2)) + ((kperp*vdrift(j))**2/((x-kz*vdrift(j))**2-Omega(j)**2))
+dispP=-(1.d0/(ell(j)*ell(j)))*dispP
+
+dispJ=-(1.d0/(ell(j)*ell(j)))*kperp*vdrift(j)*(x-kz*vdrift(j))/((x-kz*vdrift(j))**2-Omega(j)**2)
+
+dispM=uniti*(1.d0/(ell(j)*ell(j)))*kperp*vdrift(j)*Omega(j)/((x-kz*vdrift(j))**2-Omega(j)**2)
+
+
+chi(1,1)=(dispR+dispL)/2.d0
+chi(1,2)=-uniti*(dispR-dispL)/2.d0
+chi(1,3)=dispJ
+chi(2,1)=uniti*(dispR-dispL)/2.d0
+chi(2,2)=(dispR+dispL)/2.d0
+chi(2,3)=dispM
+chi(3,1)=dispJ
+chi(3,2)=-dispM
+chi(3,3)=dispP
+
+end subroutine
 
 
 

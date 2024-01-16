@@ -1,5 +1,5 @@
 ! NHDS is a numerical solver to the linear hot-plasma dispersion relation
-! Copyright (C) 2023 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,8 @@ module input_params
   save
   integer :: numspec,numiter,nmax,mmax,ampl_mode,species_df,scan_type
   integer :: vxsteps,vysteps,vzsteps,timesteps,num_periods,ksteps,theta_steps
-  double precision :: vtherm(10),alpha(10),Omega(10),ell(10),vdrift(10),mass(10),charge(10),beta(10),density(10)
+  double precision, allocatable, dimension(:) :: vtherm,alpha,Omega,ell,vdrift
+  double precision, allocatable, dimension(:) :: mass,charge,beta,density
   double precision :: vAc,det_D_threshold,Bessel_zero,ampl,theta_range(2),krange(2)
   double precision :: Bessel_zero_deltaf,vxrange(2),vyrange(2),vzrange(2)
   double complex :: initial_guess
@@ -48,6 +49,7 @@ double complex :: x
 double precision, allocatable, dimension(:) :: kk,theta
 double precision :: dk, dth, kperp, kz
 character*300 :: filename
+
 
 dk=0.; dth=0.
 call get_command_argument(1,filename); filename=adjustl(filename)
@@ -167,9 +169,13 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    logical, intent(in) :: outputm, outputeb
    double complex :: Avec(3),xi,Ek(3), Bk(3)
    double complex :: dUperpx,dUperpy,dUpar,dpperp,dppar
-   double precision :: kperp,kz,energy,gamma_contribution(10), heating(10)
+   double precision :: kperp,kz,energy
+   double precision, allocatable, dimension(:) :: gamma_contribution, heating
    double precision :: quality
    integer :: j
+
+   allocate(gamma_contribution(numspec))
+   allocate(heating(numspec))
 
    kz=kk*cos(theta*M_PI/180.d0)
    kperp=kk*sin(theta*M_PI/180.d0)
@@ -178,20 +184,22 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    call calc_polarization(Avec,Ek,Bk,x,kz,kperp)
    call waveenergy(energy,x,kz,kperp,gamma_contribution,heating)
 
+
 !  if (i .eq. 1) initial_guess=x
 
    if (outputm) then
      do j=1,numspec
-       call calc_xi(xi,j,Avec,x,kz,kperp)
-       ! second parameter is index of species
-       call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
-       ! fifth parameter is index of species
-       write(11,'(ES25.15E3,F15.10,2ES25.15E3,I3,14ES25.15E3)') kk, theta, real(x), aimag(x), j, &
+
+         call calc_xi(xi,j,Avec,x,kz,kperp)
+         ! second parameter is index of species
+         call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
+         ! fifth parameter is index of species
+         write(11,'(ES25.15E3,F15.10,2ES25.15E3,I3,14ES25.15E3)') kk, theta, real(x), aimag(x), j, &
                             real(xi), aimag(xi), real(dUperpx), &
                             aimag(dUperpx), real(dUperpy), aimag(dUperpy), &
                             real(dUpar), aimag(dUpar), real(dpperp), aimag(dpperp), &
                             real(dppar), aimag(dppar), gamma_contribution(j), heating(j)
-     enddo
+       enddo
    endif
 
    if (outputeb) then

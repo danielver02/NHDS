@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2023 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -29,12 +29,14 @@
 subroutine waveenergy(energy,x,kz,kperp,gamma_contribution,heating)
 use input_params
 implicit none
-double complex :: ep(3,3),chi(3,3),chiplus(3,3),Avec(3),Ek(3),Bk(3),epprime(3,3), chi_a(10,3,3)
+double complex :: ep(3,3),chi(3,3),chiplus(3,3),Avec(3),Ek(3),Bk(3),epprime(3,3)
+double complex, allocatable, dimension(:,:,:) :: chi_a
 double complex :: Ekmult(3), Ekmultprime(3), eph(3,3), epprimeh(3,3)
-double precision :: kz,kperp,energy,gamma_contribution(10), heating(10)
+double precision :: kz,kperp,energy,gamma_contribution(numspec), heating(numspec)
 double complex :: x,xr,dx
 integer :: i,k,j
 
+allocate(chi_a(numspec,3,3))
 
 xr=real(x)
 dx=1.d-9*xr

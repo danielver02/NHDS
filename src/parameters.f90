@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2020 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -31,9 +31,11 @@ use input_params
 implicit none
 character*300, intent(in) :: filename
 
+nameList /species/ &
+  numspec
 
 nameList /parameters/ &
-    numspec, numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, scan_type, krange,&
+    numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, scan_type, krange,&
     ksteps, alpha, beta, charge, mass, density, vdrift, theta_range, theta_steps,&
     vAc, output_mom, output_EB, kth_file, kth_filename, ampl_mode, ampl, output_warning, &
     mmax, output_df, species_df, Bessel_zero_deltaf, vxsteps, vysteps, vzsteps, vxrange, &
@@ -41,6 +43,13 @@ nameList /parameters/ &
 
 
     ! Define the standard parameters:
+    allocate(alpha(2))
+    allocate(vdrift(2))
+    allocate(mass(2))
+    allocate(charge(2))
+    allocate(beta(2))
+    allocate(density(2))
+
     numspec=2
     numiter=1000
     det_D_threshold=1.d-16
@@ -52,12 +61,12 @@ nameList /parameters/ &
     ksteps=150
     theta_range=(/0.01d0,0.01d0/)
     theta_steps=1
-    alpha=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
-    beta=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
-    charge=(/1.d0,-1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
-    mass=(/1.d0,5.446623d-4,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
-    density=(/1.d0,1.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
-    vdrift=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    alpha=(/1.d0,1.d0/)
+    beta=(/1.d0,1.d0/)
+    charge=(/1.d0,-1.d0/)
+    mass=(/1.d0,5.446623d-4/)
+    density=(/1.d0,1.d0/)
+    vdrift=(/0.d0,0.d0/)
     vAc=1.d-4
     output_mom=.TRUE.
     output_EB=.TRUE.
@@ -84,11 +93,33 @@ nameList /parameters/ &
 
 
 
-
-
-
     open (unit=5,file=trim(filename),status='old',action='read')
+
+    read (unit=5,nml=species)
+    if(numspec.NE.2) then
+
+      deallocate(alpha)
+      deallocate(vdrift)
+      deallocate(mass)
+      deallocate(charge)
+      deallocate(beta)
+      deallocate(density)
+
+      allocate(alpha(numspec))
+      allocate(vdrift(numspec))
+      allocate(mass(numspec))
+      allocate(charge(numspec))
+      allocate(beta(numspec))
+      allocate(density(numspec))
+    endif
+
+    allocate(vtherm(numspec))
+    allocate(Omega(numspec))
+    allocate(ell(numspec))
+
+
     read (unit=5,nml=parameters)
+
     close(5)
 
 end subroutine
