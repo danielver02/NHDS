@@ -37,7 +37,7 @@ module input_params
   double complex :: initial_guess
   double complex, parameter ::  uniti=(0.d0,1.d0)
   double precision,parameter :: M_PI=3.141592654d0
-  logical :: output_warning,damping,periods,const_r,output_mom,output_EB,kth_file,output_df
+  logical :: output_warning,damping,periods,const_r,output_mom,output_EB,kth_file,output_df,extrapolate
   character*300 :: kth_filename
 end module input_params
 
@@ -45,7 +45,7 @@ program NHDS
 use input_params
 implicit none
 integer :: j,i,l
-double complex :: x
+double complex :: x,xprev,xnew
 double precision, allocatable, dimension(:) :: kk,theta
 double precision :: dk, dth, kperp, kz
 character*300 :: filename
@@ -131,24 +131,64 @@ endif
 
 if (kth_file) then
    x=initial_guess ! guess w in units of wci:
+
    do i=1,ksteps
       call compute(kk(i),theta(i),x,output_mom,output_EB)
    enddo
+
 else
+
 
   do l=1,theta_steps
      x=initial_guess ! guess w in units of wci:
+     xprev=x
+     xnew=x
 
      do i=1,ksteps
 
+        x=xnew
+
         select case(scan_type)
-          case(1)
+
+        case(1) ! Scan over kmag
             call compute(kk(i),theta(l),x,output_mom,output_EB)
-          case(2)
+
+            if (extrapolate.AND.((i.GT.1).AND.(i.LT.ksteps))) then
+              dk=kk(i)-kk(i-1)
+              xnew=x+((x-xprev)/dk)*(kk(i+1)-kk(i))
+            else
+              xnew=x
+            endif
+
+            xprev=x
+
+          case(2) ! Scan over kpar
             call compute(kk(i),theta(i),x,output_mom,output_EB)
-          case(3)
+
+            if (extrapolate.AND.((i.GT.1).AND.(i.LT.ksteps))) then
+              dk=kk(i)*cos(M_PI*theta(i)/180.d0)-kk(i-1)*cos(M_PI*theta(i-1)/180.d0)
+              xnew=x+((x-xprev)/dk)*(kk(i+1)*cos(M_PI*theta(i)/180.d0)-kk(i)*cos(M_PI*theta(i-1)/180.d0))
+            else
+              xnew=x
+            endif
+
+            xprev=x
+
+          case(3) ! Scan over kperp
             call compute(kk(i),theta(i),x,output_mom,output_EB)
+
+            if (extrapolate.AND.((i.GT.1).AND.(i.LT.ksteps))) then
+              dk=kk(i)*sin(M_PI*theta(i)/180.d0)-kk(i-1)*sin(M_PI*theta(i-1)/180.d0)
+              xnew=x+((x-xprev)/dk)*(kk(i+1)*sin(M_PI*theta(i)/180.d0)-kk(i)*sin(M_PI*theta(i-1)/180.d0))
+            else
+              xnew=x
+            endif
+
+            xprev=x
+
           end select
+
+
 
         if (i .eq. 1) initial_guess=x
      enddo
@@ -161,6 +201,8 @@ close(11)
 close(12)
 
 end program
+
+
 
 subroutine compute(kk,theta,x,outputm,outputeb)
    use input_params

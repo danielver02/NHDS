@@ -67,6 +67,9 @@ theta_range=0.01d0,0.01d0
 ! Steps in the theta direction
 theta_steps=1
 
+! Use a linear extrapolation to define the initial guess for the next point in k-scans:
+extrapolate=T
+
 ! Temperature anisotropy (Tperp/Tparallel):
 alpha=1.d0,1.d0
 

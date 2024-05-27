@@ -36,7 +36,7 @@ nameList /species/ &
 
 nameList /parameters/ &
     numiter, det_D_threshold, nmax, Bessel_zero, initial_guess, scan_type, krange,&
-    ksteps, alpha, beta, charge, mass, density, vdrift, theta_range, theta_steps,&
+    ksteps, alpha, beta, charge, mass, density, vdrift, theta_range, theta_steps, extrapolate, &
     vAc, output_mom, output_EB, kth_file, kth_filename, ampl_mode, ampl, output_warning, &
     mmax, output_df, species_df, Bessel_zero_deltaf, vxsteps, vysteps, vzsteps, vxrange, &
     vyrange, vzrange, timesteps, periods, num_periods, damping, const_r
@@ -61,6 +61,7 @@ nameList /parameters/ &
     ksteps=150
     theta_range=(/0.01d0,0.01d0/)
     theta_steps=1
+    extrapolate=.TRUE.
     alpha=(/1.d0,1.d0/)
     beta=(/1.d0,1.d0/)
     charge=(/1.d0,-1.d0/)
