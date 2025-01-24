@@ -23,8 +23,9 @@ jobs:
         brew install gcc
         # For some reason GitHub actions can't find gfortran unless
         # we explicitly link it
+        brew unlink gcc
         brew link gcc
-        ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
+        ln -s /usr/local/bin/gfortran-14 /usr/local/bin/gfortran
 
     - name: Build NHDS on Ubuntu
       if: ${{ matrix.os == 'ubuntu-latest' }}
