@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2023 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -186,9 +186,9 @@ do n=-nmaxrun,nmaxrun
 
 enddo
 
-
-dpperp=-2.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dpperp*exp(-z)/(kz*vtherm(j))
-dppar=-4.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dppar*exp(-z)/(kz*vtherm(j))
+! Remember that the Bessel functions I_n already include a factor exp(-z), so it does not appear here anymore:
+dpperp=-2.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dpperp/(kz*vtherm(j))
+dppar=-4.d0*uniti*ampl*mass(j)*density(j)*Omega(j)*dppar/(kz*vtherm(j))
 
 endif
 

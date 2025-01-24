@@ -1,6 +1,6 @@
 # This is NHDS - The New Hampshire Dispersion relation Solver
 
-Copyright (C) 2024 - Daniel Verscharen (d.verscharen@ucl.ac.uk)\
+Copyright (C) 2025 - Daniel Verscharen (d.verscharen@ucl.ac.uk)\
 Mullard Space Science Laboratory, University College London\
 Space Science Center, University of New Hampshire
 

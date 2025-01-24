@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,8 @@ do n=-nmaxrun,nmaxrun
    call calc_ypsilon(Ynew,j,n,kz,kperp,x)
    do i=1,3
     do k=1,3
-      Y(i,k)=Y(i,k)+exp(-z)*Ynew(i,k)
+      ! Remember that the Bessel functions give I_n(z)*exp(-z), so the factor exp(-z) is absorbed.
+      Y(i,k)=Y(i,k)+Ynew(i,k)
     enddo
    enddo
 enddo
@@ -187,6 +188,7 @@ end subroutine
 
 
 function besselI(n,x)
+! This function calculates I_n(x)*exp(-x) instead of I_n(x)
 implicit none
 double precision :: besselI,x,BESSI
 integer :: n
@@ -219,6 +221,8 @@ end function
 
 ! ----------------------------------------------------------------------
       FUNCTION BESSI(N,X)
+! This function calculates I_n(x)*exp(-x) instead of I_n(x)
+
 !
 !     This subroutine calculates the first kind modified Bessel function
 !     of integer order N, for any REAL X. We use here the classical
@@ -228,8 +232,10 @@ end function
 !     C.W.CLENSHAW, CHEBYSHEV SERIES FOR MATHEMATICAL FUNCTIONS,
 !     MATHEMATICAL TABLES, VOL.5, 1962.
 !
-      PARAMETER (IACC = 40,BIGNO = 1.D10, BIGNI = 1.D-10)
-      REAL *8 X,BESSI,BESSI0,BESSI1,TOX,BIM,BI,BIP
+      DOUBLE PRECISION  X,BESSI,BESSI0,BESSI1,TOX,BIM,BI,BIP
+      INTEGER,PARAMETER :: IACC = 40
+      INTEGER,PARAMETER :: IBIGNO = maxexponent(x)/2
+
       IF (N.EQ.0) THEN
       BESSI = BESSI0(X)
       RETURN
@@ -251,10 +257,10 @@ end function
       BIM = BIP+DFLOAT(J)*TOX*BI
       BIP = BI
       BI  = BIM
-      IF (ABS(BI).GT.BIGNO) THEN
-      BI  = BI*BIGNI
-      BIP = BIP*BIGNI
-      BESSI = BESSI*BIGNI
+      IF (EXPONENT(BI).GT.IBIGNO) THEN
+      BI  = scale(BI,-IBIGNO)
+      BIP = scale(BIP,-IBIGNO)
+      BESSI = scale(BESSI,-IBIGNO)
       ENDIF
       IF (J.EQ.N) BESSI = BIP
    12 CONTINUE
@@ -263,6 +269,8 @@ end function
       END
 ! ----------------------------------------------------------------------
 ! Auxiliary Bessel functions for N=0, N=1
+! This function calculates I_0(x)*exp(-x) instead of I_0(x)
+
       FUNCTION BESSI0(X)
       REAL *8 X,BESSI0,Y,P1,P2,P3,P4,P5,P6,P7,  &
       Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
@@ -271,19 +279,20 @@ end function
       DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9/0.39894228D0,0.1328592D-1, &
       0.225319D-2,-0.157565D-2,0.916281D-2,-0.2057706D-1,  &
       0.2635537D-1,-0.1647633D-1,0.392377D-2/
-      IF(ABS(X).LT.3.75D0) THEN
-      Y=(X/3.75D0)**2
-      BESSI0=P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7)))))
-      ELSE
       AX=ABS(X)
+      IF(AX.LT.3.75D0) THEN
+      Y=(X/3.75D0)**2
+      BESSI0=(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))*EXP(-AX)
+      ELSE
       Y=3.75D0/AX
-      BX=EXP(AX)/SQRT(AX)
+      BX=1.D0/SQRT(AX)
       AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
       BESSI0=AX*BX
       ENDIF
       RETURN
       END
 ! ----------------------------------------------------------------------
+! This function calculates I_1(x)*exp(-x) instead of I_1(x)
       FUNCTION BESSI1(X)
       REAL *8 X,BESSI1,Y,P1,P2,P3,P4,P5,P6,P7,  &
       Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
@@ -292,13 +301,13 @@ end function
       DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9/0.39894228D0,-0.3988024D-1, &
       -0.362018D-2,0.163801D-2,-0.1031555D-1,0.2282967D-1, &
       -0.2895312D-1,0.1787654D-1,-0.420059D-2/
-      IF(ABS(X).LT.3.75D0) THEN
-      Y=(X/3.75D0)**2
-      BESSI1=X*(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))
-      ELSE
       AX=ABS(X)
+      IF(AX.LT.3.75D0) THEN
+      Y=(X/3.75D0)**2
+      BESSI1=X*(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))*EXP(-AX)
+      ELSE
       Y=3.75D0/AX
-      BX=EXP(AX)/SQRT(AX)
+      BX=1.D0/SQRT(AX)
       AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
       BESSI1=AX*BX
       ENDIF

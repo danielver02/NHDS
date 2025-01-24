@@ -1,5 +1,5 @@
 ! NHDS is a numerical solver to the linear hot-plasma dispersion relation
-! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
