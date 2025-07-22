@@ -232,9 +232,8 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    if (outputm) then
      do j=1,numspec
 
-         call calc_xi(xi,j,Avec,x,kz,kperp)
-         ! second parameter is index of species
-         call calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
+         
+         call calc_xi(xi,dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
          ! fifth parameter is index of species
          write(11,'(ES25.15E3,F15.10,2ES25.15E3,I3,14ES25.15E3)') kk, theta, real(x), aimag(x), j, &
                             real(xi), aimag(xi), real(dUperpx), &

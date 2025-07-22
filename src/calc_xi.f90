@@ -26,35 +26,13 @@
 !of the authors and should not be interpreted as representing official policies,
 !either expressed or implied, of the NHDS project.
 
-subroutine calc_xi(xi,j,Avec,x,kz,kperp)
-use input_params
-implicit none
-double precision :: kz,kperp
-double complex :: x,Avec(3),xi,chi(3,3)
-integer :: j
-
-! This subroutine calculates the quantity xi in dn/n_0 = xi * dB_(x,y,z)/B_0
 
 
-call calc_chi(chi,j,kz,kperp,x)
-
-! continuity equation (as in Stix 10-75)
-xi=kperp*(chi(1,1)*Avec(1)+chi(1,2)*Avec(2)+chi(1,3)*Avec(3))
-xi=xi+kz*(chi(3,1)*Avec(1)+chi(3,2)*Avec(2)+chi(3,3)*Avec(3))
-xi=-uniti*xi*ampl/(x*x*density(j)*charge(j))
-
-! Normalization: chi is different by a factor vAc*vAc from Stix' definition:
-! our chi divided by (v_A/c)^2 ond x^2 is equal to Stix' chi.
-
-end subroutine
-
-
-
-subroutine calc_fluctRj(dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
+subroutine calc_xi(xi,dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
 use input_params
 implicit none
 double precision :: kz,kperp,z,besselI,BInz,dBInzdz,d2BInzdz2
-double complex :: x,Avec(3),dispfunct,zeta,chi(3,3)
+double complex :: x,Avec(3),dispfunct,zeta,chi(3,3),xi
 double complex :: Z0,Z1,Z2,Z3,dpperp,dppar,Exterm,Eyterm,Ezterm,dUpar
 double complex :: dUperpx,dUperpy,Ubar
 logical :: kpos,Bessel_run
@@ -69,14 +47,25 @@ z=0.5d0*(kperp*vtherm(j)/Omega(j))*(kperp*vtherm(j)/Omega(j))*alpha(j)
 kpos=.TRUE.
 if (kz.LT.0.d0) kpos=.FALSE.
 
+ 
+! Normalization: chi is different by a factor vAc*vAc*x*x from Stix' definition:
+! our chi divided by (v_A/c)^2 and x^2 is equal to Stix' chi.
+call calc_chi(chi,j,kz,kperp,x)
+
+! continuity equation (as in Stix 10-75)
+! The following calculates the quantity xi in dn/n_0 = xi * dB_(x,y,z)/B_0
+xi=kperp*(chi(1,1)*Avec(1)+chi(1,2)*Avec(2)+chi(1,3)*Avec(3))
+xi=xi+kz*(chi(3,1)*Avec(1)+chi(3,2)*Avec(2)+chi(3,3)*Avec(3))
+xi=-uniti*xi*ampl/(x*x*density(j)*charge(j))
 
 
-! This is for the calculation of dUpar and dUperp from the definition of the current density
+! The following calculates dUpar and dUperp from the definition of the current density
 ! and the susceptibility. These expressions are equivalent to taking the first moment
 ! of delta f and lead to the same result.
-call calc_chi(chi,j,kz,kperp,x)
+
 dUpar=chi(3,1)*Avec(1)+chi(3,2)*Avec(2)+chi(3,3)*Avec(3)
 dUpar=-uniti*dUpar*ampl/(x*density(j)*charge(j))
+dUpar=dUpar-xi*vdrift(j) ! This final term accounts for the parallel flow of the species j.
 
 dUperpx=chi(1,1)*Avec(1)+chi(1,2)*Avec(2)+chi(1,3)*Avec(3)
 dUperpx=-uniti*dUperpx*ampl/(x*density(j)*charge(j))
@@ -84,6 +73,9 @@ dUperpx=-uniti*dUperpx*ampl/(x*density(j)*charge(j))
 dUperpy=chi(2,1)*Avec(1)+chi(2,2)*Avec(2)+chi(2,3)*Avec(3)
 dUperpy=-uniti*dUperpy*ampl/(x*density(j)*charge(j))
 
+
+
+! Check whether we run the cold plasma case:
 if (vtherm(j).EQ.0.d0) then
 
   dpperp=0.d0
@@ -95,8 +87,6 @@ else
 ! This is without dUpar:
 Ubar=vdrift(j)!+dUpar
 
-! Normalization: chi is different by a factor vAc*vAc from Stix' definition:
-! our chi divided by (v_A/c)^2 and by x^2 is equal to Stix' chi.
 
 ! dUperpx and dUperpy need to be small so that the following calculation is accurate.
 
