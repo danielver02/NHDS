@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2026 Daniel Verscharen (d.verscharen@ucl.ac.uk)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -125,9 +125,15 @@ vz=vzrange(1)+(1.d0*l)*(vzrange(2)-vzrange(1))/(1.d0*vzsteps)
 
 vpar=vz
 vperp=sqrt(vx*vx+vy*vy)
-phi=acos(vx/vperp)
+
+if (vperp.EQ.0.d0) then
+   phi=0.d0
+else
+      phi=acos(vx/vperp)
+endif
+
 if (vy.LT.0.d0) phi=2.d0*M_PI-phi
-if (vperp.EQ.0.d0) phi=0.d0
+
 
 dfdvpar=-2.d0*(vpar-vdrift(j))*exp(-vperp*vperp/(alpha(j)*vtherm(j)*vtherm(j)))
 dfdvpar=dfdvpar*exp(-(vpar-vdrift(j))*(vpar-vdrift(j))/(vtherm(j)*vtherm(j)))
