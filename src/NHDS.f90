@@ -1,5 +1,5 @@
 ! NHDS is a numerical solver to the linear hot-plasma dispersion relation
-! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2026 Daniel Verscharen (daniel.verscharen@rub.de)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -216,15 +216,16 @@ subroutine compute(kk,theta,x,outputm,outputeb)
    double precision :: quality
    integer :: j
 
+
    allocate(gamma_contribution(numspec))
    allocate(heating(numspec))
 
    kz=kk*cos(theta*M_PI/180.d0)
    kperp=kk*sin(theta*M_PI/180.d0)
 
-   call newton_method(x,kz,kperp,quality)
-   call calc_polarization(Avec,Ek,Bk,x,kz,kperp)
-   call waveenergy(energy,x,kz,kperp,gamma_contribution,heating)
+  call newton_method(x,kz,kperp,quality)
+  call calc_polarization(Avec,Ek,Bk,x,kz,kperp)
+  call waveenergy(energy,x,kz,kperp,gamma_contribution,heating)
 
 
 !  if (i .eq. 1) initial_guess=x
@@ -233,7 +234,8 @@ subroutine compute(kk,theta,x,outputm,outputeb)
      do j=1,numspec
 
          
-         call calc_xi(xi,dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
+        call calc_xi(xi,dpperp,dppar,dUperpx,dUperpy,dUpar,j,Avec,x,kz,kperp)
+
          ! fifth parameter is index of species
          write(11,'(ES25.15E3,F15.10,2ES25.15E3,I3,14ES25.15E3)') kk, theta, real(x), aimag(x), j, &
                             real(xi), aimag(xi), real(dUperpx), &

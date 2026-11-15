@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2026 Daniel Verscharen (daniel.verscharen@rub.de)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ double complex :: Z0,Z1,Z2,Z3,dpperp,dppar,Exterm,Eyterm,Ezterm,dUpar
 double complex :: dUperpx,dUperpy,Ubar
 logical :: kpos,Bessel_run
 integer :: j,n,nmaxrun
+
 
 ! This subroutine calculates the pressure fluctuations that are
 ! needed to calculate the quantity R_j (the fluctuations in the temperature anisotropy of species j)
@@ -118,13 +119,24 @@ dppar=0.d0
 ! Run over all n:
 do n=-nmaxrun,nmaxrun
 
-	if (n.GE.0) then
-		BInz=1.d0*besselI(n,z)
-		dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
-	else
-		BInz=1.d0*besselI(-n,z)
-		dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
-	endif
+
+if (n.GE.0) then
+	BInz=1.d0*besselI(n,z)
+	if (kperp.EQ.0.d0) then
+            dBInzdz=0.5d0
+       else
+            dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
+      endif
+else
+	BInz=1.d0*besselI(-n,z)
+      if (kperp.EQ.0.d0) then
+            dBInzdz=0.5d0
+       else
+            dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
+      endif
+endif
+
+
 
 	if (n.GE.2) d2BInzdz2=0.25d0*(besselI(n-2,z)+2.d0*besselI(n,z)+besselI(n+2,z))
 	if (n.LE.-2) d2BInzdz2=0.25d0*(besselI(2-n,z)+2.d0*besselI(-n,z)+besselI(-2-n,z))
@@ -147,21 +159,30 @@ do n=-nmaxrun,nmaxrun
 
 	! This is for the calculation of dpperp:
 
-	Exterm=Avec(1)*(BInz+z*(dBinzdz-BInz))*(1.d0*n)*Omega(j)/kperp
+	if (kperp.EQ.0.d0) then
+		Exterm=0.d0
+	else
+		Exterm=Avec(1)*(BInz+z*(dBinzdz-BInz))*(1.d0*n)*Omega(j)/kperp
+	endif
 	Eyterm=-uniti*Avec(2)*(BInz-dBInzdz-0.5d0*z*(BInz+d2BInzdz2)+z*dBInzdz)
 	Eyterm=Eyterm*kperp*vtherm(j)*vtherm(j)*alpha(j)/Omega(j)
 	Ezterm=(1.d0-1.d0*n*Omega(j)/x)*alpha(j)*(Z1-vdrift(j)*Z0)+1.d0*n*Omega(j)*Z1/x
 	Ezterm=Ezterm*Avec(3)*(BInz+z*(dBInzdz-BInz))
 
 	dpperp=dpperp+(Exterm+Eyterm)*(Z0-kz*Z1/x+alpha(j)*kz*(Z1-vdrift(j)*Z0)/x)+Ezterm
-
+  
 
 	! This is for the calculation of dppar:
 
-	Exterm=alpha(j)*kz*(Z3-vdrift(j)*Z2-2.d0*Ubar*Z2+2.d0*vdrift(j)*Ubar*Z1+Ubar*Ubar*Z1-vdrift(j)*Ubar*Ubar*Z0)/x
-	Exterm=Exterm+Z2-2.d0*Ubar*Z1+Ubar*Ubar*Z0
-	Exterm=Exterm-kz*(Z3-2.d0*Ubar*Z2+Ubar*Ubar*Z1)/x
-	Exterm=Exterm*Avec(1)*BInz*(1.d0*n)*Omega(j)/(kperp*vtherm(j)*vtherm(j)*alpha(j))
+	if (kperp.EQ.0.d0) then
+		Exterm=0.d0
+	else	
+		Exterm=alpha(j)*kz*(Z3-vdrift(j)*Z2-2.d0*Ubar*Z2+2.d0*vdrift(j)*Ubar*Z1+Ubar*Ubar*Z1-vdrift(j)*Ubar*Ubar*Z0)/x
+		Exterm=Exterm+Z2-2.d0*Ubar*Z1+Ubar*Ubar*Z0
+		Exterm=Exterm-kz*(Z3-2.d0*Ubar*Z2+Ubar*Ubar*Z1)/x
+		Exterm=Exterm*Avec(1)*BInz*(1.d0*n)*Omega(j)/(kperp*vtherm(j)*vtherm(j)*alpha(j))
+	endif
+	
 	Eyterm=alpha(j)*kz*(Z3-vdrift(j)*Z2-2.d0*Ubar*Z2+2.d0*vdrift(j)*Ubar*Z1+Ubar*Ubar*Z1-vdrift(j)*Ubar*Ubar*Z0)/x
 	Eyterm=Eyterm+Z2-2.d0*Ubar*Z1+Ubar*Ubar*Z0
 	Eyterm=Eyterm-kz*(Z3-2.d0*Ubar*Z2+Ubar*Ubar*Z1)/x

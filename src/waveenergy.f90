@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2026 Daniel Verscharen (daniel.verscharen@rub.de)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ double complex :: Ekmult(3), Ekmultprime(3), eph(3,3), epprimeh(3,3)
 double precision :: kz,kperp,energy,gamma_contribution(numspec), heating(numspec)
 double complex :: x,xr,dx
 integer :: i,k,j
+
 
 allocate(chi_a(numspec,3,3))
 

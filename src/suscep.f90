@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2026 Daniel Verscharen (daniel.verscharen@rub.de)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -127,21 +127,42 @@ Bn=Bn+((x-1.d0*n*Omega(j))*(alpha(j)*resfac+1.d0*n*Omega(j))/(kz*kz*vtherm(j)) )
 
 if (n.GE.0) then
 	BInz=1.d0*besselI(n,z)
-	dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
+	if (kperp.EQ.0.d0) then
+            dBInzdz=0.5d0
+       else
+            dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
+      endif
 else
 	BInz=1.d0*besselI(-n,z)
-	dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
+      if (kperp.EQ.0.d0) then
+            dBInzdz=0.5d0
+       else
+            dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
+      endif
 endif
 
 
 ! The tensor in Stix's (10-57)
-Y(1,1)=1.d0*(n*n)*BInz*An/z
+if (kperp.EQ.0.d0) then
+      if (abs(n).EQ.1) then
+            Y(1,1)=0.5d0*An
+            Y(2,2)=(0.5d0)*An
+      else
+            Y(1,1)=0.d0
+            Y(2,2)=0.d0
+      endif
+      Y(1,3)=0.d0
+      Y(3,1)=0.d0
+else
+      Y(1,1)=1.d0*(n*n)*BInz*An/z
+      Y(1,3)=kperp*n*BInz*Bn/(Omega(j)*z)
+      Y(2,2)=(1.d0*(n*n)*BInz/z+2.d0*z*BInz-2.d0*z*dBInzdz)*An
+      Y(3,1)=kperp*BInz*n*Bn/(Omega(j)*z)
+endif
+
 Y(1,2)=-uniti*n*(BInz-dBInzdz)*An
-Y(1,3)=kperp*n*BInz*Bn/(Omega(j)*z)
 Y(2,1)=uniti*n*(BInz-dBInzdz)*An
-Y(2,2)=(1.d0*(n*n)*BInz/z+2.d0*z*BInz-2.d0*z*dBInzdz)*An
 Y(2,3)=uniti*kperp*(BInz-dBInzdz)*Bn/Omega(j)
-Y(3,1)=kperp*BInz*n*Bn/(Omega(j)*z)
 Y(3,2)=-uniti*kperp*(BInz-dBInzdz)*Bn/Omega(j)
 Y(3,3)=2.d0*(x-1.d0*n*Omega(j))*BInz*Bn/(kz*vtherm(j)*vtherm(j)*alpha(j))
 

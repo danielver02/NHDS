@@ -1,5 +1,5 @@
 ! This file is part of NHDS
-! Copyright (C) 2025 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+! Copyright (C) 2025 Daniel Verscharen (daniel.verscharen@rub.de)
 !All rights reserved.
 !
 !Redistribution and use in source and binary forms, with or without
@@ -37,15 +37,17 @@ double precision :: kz,kperp
 
 call disptensor(D,x,kz,kperp)
 
-pol=(D(1,1)*D(2,3)-D(1,3)*D(2,1))/(D(1,3)*D(2,2)-D(1,2)*D(2,3))
-pol=pol/uniti
+	if (kperp.eq.0.d0) then
+		pol=uniti*(D(1,1)/D(1,2))
+		polz=-uniti*pol*(D(3,1)/D(3,3))
+	else
+		pol=(D(1,1)*D(2,3)-D(1,3)*D(2,1))/(D(1,3)*D(2,2)-D(1,2)*D(2,3))
+		pol=pol/uniti
+		polz=(D(1,1)*D(2,2)-D(1,2)*D(2,1))/(D(1,2)*D(2,3)-D(1,3)*D(2,2))
 
-
-! pol is the quantity -iEky/Ekx = (Ekr-Ekl)/(Ekl+Ekr)
-
-polz=(D(1,1)*D(2,2)-D(1,2)*D(2,1))/(D(1,2)*D(2,3)-D(1,3)*D(2,2))
-
-! polz is the quantity Ekz/Ekx
+	endif
+	! pol is the quantity -iEky/Ekx = (Ekr-Ekl)/(Ekl+Ekr)
+	! polz is the quantity Ekz/Ekx
 
 
 
